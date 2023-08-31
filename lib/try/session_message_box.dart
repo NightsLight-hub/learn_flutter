@@ -17,6 +17,20 @@ class SessionMessageBox extends ConsumerStatefulWidget {
 
 class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
   TextEditingController inputController = TextEditingController();
+  late FocusNode textFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    textFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    textFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +51,19 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
             children: [
               Expanded(
                 child: TextField(
+                  autofocus: true,
+                  focusNode: textFocusNode,
                   keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
                   controller: inputController,
+                  onEditingComplete: (){
+                    setState(() {
+                      var msg = inputController.value.text;
+                      messages.add(Message(msg, 'Jasmine'));
+                      inputController.clear();
+                      textFocusNode.requestFocus();
+                    });
+                  },
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Message',
@@ -51,6 +76,8 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
                   setState(() {
                     var msg = inputController.value.text;
                     messages.add(Message(msg, 'Jasmine'));
+                    inputController.clear();
+                    textFocusNode.requestFocus();
                   });
                 },
                 label: const Text('Send'),
