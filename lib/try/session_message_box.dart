@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'model.dart';
 
@@ -17,6 +18,7 @@ class SessionMessageBox extends ConsumerStatefulWidget {
 
 class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
   TextEditingController inputController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
   late FocusNode textFocusNode;
 
   @override
@@ -32,6 +34,51 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
     super.dispose();
   }
 
+  _sendMessage() {
+    Messages messages = ref.watch(messagesProvider);
+    setState(() {
+      var msg = inputController.value.text;
+      messages.add(Message(msg, 'Jasmine'));
+      inputController.clear();
+      textFocusNode.requestFocus();
+    });
+    Future.delayed(const Duration(milliseconds: 50), () {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+
+  Row renderText(String name, String content) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text.rich(TextSpan(children: [
+        TextSpan(
+          text: '$name:  ',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ])),
+      // 给个固定宽度， 垂直方向是listview可以自适应滚动，因此不会溢出
+      Container(
+          constraints: const BoxConstraints(maxWidth: 650),
+          decoration: BoxDecoration(
+            color: const Color(0xFF95EC69),
+            borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+            border: Border.all(width: 8, color: Colors.white),
+          ),
+          child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                content,
+                style: GoogleFonts.lato(
+                    textStyle: const TextStyle(
+                  color: Colors.black,
+                  backgroundColor: Color(0xFF95EC69),
+                  fontSize: 18,
+                )),
+              )))
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(messagesProvider).content;
@@ -40,10 +87,11 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: messages.length,
               itemBuilder: (context, index) {
-                return Text(
-                    "${messages[index].time} ${messages[index].sender}: ${messages[index].content}");
+                return renderText(
+                    messages[index].sender, messages[index].content);
               },
             ),
           ),
@@ -56,30 +104,16 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.done,
                   controller: inputController,
-                  onEditingComplete: (){
-                    setState(() {
-                      var msg = inputController.value.text;
-                      messages.add(Message(msg, 'Jasmine'));
-                      inputController.clear();
-                      textFocusNode.requestFocus();
-                    });
-                  },
+                  onEditingComplete: _sendMessage,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Message',
+                    labelText: '消息',
                   ),
                 ),
               ),
               TextButton.icon(
                 icon: const Icon(Icons.send),
-                onPressed: () {
-                  setState(() {
-                    var msg = inputController.value.text;
-                    messages.add(Message(msg, 'Jasmine'));
-                    inputController.clear();
-                    textFocusNode.requestFocus();
-                  });
-                },
+                onPressed: _sendMessage,
                 label: const Text('Send'),
               ),
             ],

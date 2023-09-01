@@ -11,6 +11,18 @@ class Message {
 
 class Messages {
   List<Message> content = [];
+
+  void add(Message msg) {
+    content.add(msg);
+  }
+
+  void remove(Message msg) {
+    content.remove(msg);
+  }
+
+  void clear() {
+    content.clear();
+  }
 }
 
 var _messages = Messages();
