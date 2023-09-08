@@ -5,10 +5,18 @@ SizedBox buildSessionName(){
   return const SizedBox(
     height: 64,
     child: SelectionArea(
-        child: Text(
-          "老婆",
-          style: TextStyle(fontSize: 30),
-        )),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                SizedBox(width: 15,),
+                Text(
+                  "Jasmine",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 30),
+                ),
+              ],
+            ))),
   );
 }
 

@@ -1,10 +1,13 @@
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'model.dart';
+import 'config/config.dart';
+import 'gobal_state/model.dart';
+import 'gobal_state/state.dart';
 
 // SessionBox 是对话的区域，包括消息展示和消息发送
 
@@ -19,33 +22,100 @@ class SessionMessageBox extends ConsumerStatefulWidget {
 }
 
 class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
-  TextEditingController inputController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  late FocusNode textFocusNode;
+  late TextEditingController _inputController;
+  late ScrollController _scrollController;
+  late FocusNode _textFocusNode;
 
   @override
   void initState() {
     super.initState();
-    textFocusNode = FocusNode();
+    _textFocusNode = FocusNode();
+    _inputController = TextEditingController();
+    _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
     // Clean up the focus node when the Form is disposed.
-    textFocusNode.dispose();
+    _textFocusNode.dispose();
+    _inputController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  _sendMessage() {
-    Messages messages = ref.watch(messagesProvider);
-    setState(() {
-      var msg = inputController.value.text;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        children: [
+          _buildMessageShowWidget(),
+          _buildMessageInputRow(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageShowWidget() {
+    List<Message> messages = ref.watch(messagesProvider);
+    List<Message> renderMessages = messages.length > Config.messageMaxNumber
+        ? messages.sublist(messages.length - Config.messageMaxNumber)
+        : messages;
+    return Expanded(
+        child: ListView.builder(
+          padding: const EdgeInsets.all(10),
+      controller: _scrollController,
+      itemCount: renderMessages.length,
+      itemBuilder: (context, index) {
+        if (renderMessages[index].sender != 'Sunxy') {
+          return renderMessage(renderMessages[index]);
+        } else {
+          return renderMessage(renderMessages[index], isSelf: true);
+        }
+      },
+    ));
+  }
+
+  Row _buildMessageInputRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            autofocus: true,
+            focusNode: _textFocusNode,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.done,
+            controller: _inputController,
+            onEditingComplete: _sendMessage,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: '消息',
+            ),
+          ),
+        ),
+        TextButton.icon(
+          icon: const Icon(Icons.send),
+          onPressed: _sendMessage,
+          label: const Text('发送'),
+        ),
+      ],
+    );
+  }
+
+  _sendMessage() async {
+    var msg = _inputController.value.text;
+    if (msg.trim().isEmpty) {
+      return;
+    }
+    // setState(() {
+    try {
       Random().nextBool()
-          ? messages.add(Message(msg, 'Sunxy'))
-          : messages.add(Message(msg, 'Jasmine'));
-      inputController.clear();
-      textFocusNode.requestFocus();
-    });
+          ? ref.read(messagesProvider.notifier).add(Message(msg, 'Sunxy'))
+          : ref.read(messagesProvider.notifier).add(Message(msg, 'Jasmine'));
+    } finally {
+      _inputController.clear();
+      _textFocusNode.requestFocus();
+    }
+
     Future.delayed(const Duration(milliseconds: 50), () {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
@@ -53,20 +123,20 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
 
   // 渲染消息， 用于抽象不同消息类型的展示
   Row renderMessage(Message msg, {bool isSelf = false}) {
-    return renderText(msg.sender, msg.content, isSelf: isSelf);
+    return _renderText(msg.sender, msg.content, isSelf: isSelf);
   }
 
   /// RenderText is used to render message
   ///
   /// if isSelf is true, the message will be rendered on the right side,
   /// otherwise on the left side
-  Row renderText(String name, String content, {bool isSelf = false}) {
+  Row _renderText(String name, String content, {bool isSelf = false}) {
     var align = isSelf ? MainAxisAlignment.end : MainAxisAlignment.start;
     var senderAvatar = Container(
       margin: const EdgeInsets.all(10),
       child: Image(
-          width: 100,
-          height: 100,
+          width: 50,
+          height: 50,
           image: AssetImage(isSelf
               ? 'assets/images/avatarMan.jpg'
               : 'assets/images/avatarWoman.jpg')),
@@ -104,55 +174,5 @@ class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
           isSelf ? [messageText, senderAvatar] : [senderAvatar, messageText],
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final messages = ref.watch(messagesProvider).content;
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-              child: ListView.builder(
-            controller: _scrollController,
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              if (messages[index].sender != 'Sunxy') {
-                return renderMessage(messages[index]);
-              } else {
-                return renderMessage(messages[index], isSelf: true);
-              }
-            },
-          )),
-          buildMessageInputRow(textFocusNode, inputController, _sendMessage),
-        ],
-      ),
-    );
-  }
 }
 
-Row buildMessageInputRow(FocusNode textFocusNode,
-    TextEditingController inputController, VoidCallback sendMessage) {
-  return Row(
-    children: [
-      Expanded(
-        child: TextField(
-          autofocus: true,
-          focusNode: textFocusNode,
-          keyboardType: TextInputType.multiline,
-          textInputAction: TextInputAction.done,
-          controller: inputController,
-          onEditingComplete: sendMessage,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: '消息',
-          ),
-        ),
-      ),
-      TextButton.icon(
-        icon: const Icon(Icons.send),
-        onPressed: sendMessage,
-        label: const Text('发送'),
-      ),
-    ],
-  );
-}
