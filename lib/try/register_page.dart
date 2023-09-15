@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/try/utils/store.dart';
 
-import 'gobal_state/model.dart';
-import 'gobal_state/state.dart';
+import 'api/apis.dart';
+import 'global_state/model.dart';
+import 'global_state/state.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -15,7 +17,8 @@ class RegisterPage extends ConsumerStatefulWidget {
 
 class RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  String userName = "";
+  String phoneNumber = "";
+  String nickName = "";
   String password = "";
   String password2 = "";
 
@@ -33,6 +36,7 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -45,17 +49,38 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
                     TextFormField(
                       decoration: const InputDecoration(
                         filled: true,
-                        hintText: '输入用户名',
-                        labelText: '用户名',
+                        hintText: '输入手机号',
+                        labelText: '手机号',
                       ),
                       onChanged: (value) {
                         setState(() {
-                          userName = value;
+                          phoneNumber = value;
                         });
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return '输入用户名！！！';
+                          return '输入手机号！！！';
+                        }
+                        RegExp r = RegExp(
+                            '(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}');
+                        if (r.stringMatch(value) != value) {
+                          return '请输入有效的手机号码';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        hintText: '输入昵称',
+                        labelText: '昵称',
+                      ),
+                      onChanged: (value) {
+                        nickName = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '输入昵称！！！';
                         }
                         return null;
                       },
@@ -139,19 +164,21 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   registerUser() async {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('注册成功'),
-          duration: Duration(milliseconds: 1000),
-        ),
-      );
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    try {
+      LoginCertificate certificate = await Apis.register(
+          phone: phoneNumber, nickName: nickName, password: password);
+      Store().loginCertificate = certificate;
       // todo 处理登录人信息
       Future.delayed(const Duration(milliseconds: 500), () {
         ref
             .read(appStateProvider.notifier)
-            .login(const UserInfo("fakeId", "sunxy"));
+            .login(UserInfo(certificate.userID, nickName, phoneNumber));
       });
+    } catch (e) {
+      print(e);
     }
   }
 }

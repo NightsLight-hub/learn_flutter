@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/try/gobal_state/state.dart';
+import 'package:learn_flutter/try/config/config.dart';
+import 'package:learn_flutter/try/contact/contact_view.dart';
+import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/login.dart';
 import 'package:learn_flutter/try/register_page.dart';
 import 'package:learn_flutter/try/session_name.dart';
+import 'package:learn_flutter/try/utils/http_utils.dart';
+import 'package:learn_flutter/try/utils/store.dart';
 
 import 'try/_intern/tapable_avatar.dart';
-import 'try/gobal_state/model.dart';
+import 'try/global_state/model.dart';
 
 var currentPage = "login";
 
@@ -99,6 +103,7 @@ class LeftColumn extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 80),
             child: Column(
+              // operation panel
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -176,7 +181,7 @@ class LeftColumn extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          Text('saf'),
+                          ContactView()
                         ],
                       ),
                     ],
@@ -187,95 +192,18 @@ class LeftColumn extends StatelessWidget {
           ),
         ],
       ),
-      // child: Row(
-      //   children: [
-      //     Column(
-      //       children: [
-      //         Expanded(
-      //             child: SizedBox(
-      //           width: 80,
-      //           child: Column(
-      //             crossAxisAlignment: CrossAxisAlignment.stretch,
-      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             children: [
-      //               Container(
-      //                 child: Column(
-      //                   crossAxisAlignment: CrossAxisAlignment.stretch,
-      //                   children: [
-      //                     IconButton(
-      //                         icon: const Icon(
-      //                           Icons.chat,
-      //                           size: 45,
-      //                         ),
-      //                         onPressed: () {
-      //                           print("object");
-      //                         }),
-      //                     const SizedBox(height: 20),
-      //                     IconButton(
-      //                         icon: const Icon(
-      //                           Icons.people,
-      //                           size: 45,
-      //                         ),
-      //                         onPressed: () {
-      //                           print("object");
-      //                         }),
-      //                     const SizedBox(height: 20),
-      //                     IconButton(
-      //                         icon: const Icon(
-      //                           Icons.dashboard,
-      //                           size: 45,
-      //                         ),
-      //                         onPressed: () {
-      //                           print("object");
-      //                         }),
-      //                   ],
-      //                 ),
-      //               ),
-      //               Container(
-      //                 margin: const EdgeInsets.only(bottom: 40),
-      //                   // 设置
-      //                   child: IconButton(
-      //                 icon: const Icon(
-      //                   Icons.settings,
-      //                   size: 45,
-      //                 ),
-      //                 onPressed: () {
-      //                   print("object");
-      //                 },
-      //               ))
-      //             ],
-      //           ),
-      //         ))
-      //       ],
-      //     ),
-      //     Column(
-      //       children: [
-      //         Expanded(
-      //           child: Container(
-      //             decoration: BoxDecoration(
-      //               color: Colors.blue[100],
-      //               // shape: BoxShape.circle, //形状
-      //               border: const Border(left: BorderSide(width: 1.0)),
-      //             ),
-      //             child: const Row(
-      //               children: [
-      //                 Column(
-      //                   children: [
-      //                     Text('saf'),
-      //                   ],
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //         )
-      //       ],
-      //     )
-      //   ],
-      // ),
     );
   }
 }
 
+init() async {
+  Config.host = '172.31.224.144';
+  await Config.init();
+  await HttpUtil.init();
+  await Store().init(Config.cachePath);
+}
+
 main() {
+  init();
   runApp(const ProviderScope(child: SxyApp()));
 }

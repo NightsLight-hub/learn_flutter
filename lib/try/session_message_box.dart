@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'config/config.dart';
-import 'gobal_state/model.dart';
-import 'gobal_state/state.dart';
+import 'global_state/model.dart';
+import 'global_state/state.dart';
 
 // SessionBox 是对话的区域，包括消息展示和消息发送
 
