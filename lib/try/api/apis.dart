@@ -17,6 +17,11 @@ class Apis {
         'operationID': Utils.operationID()
       });
 
+  static Options get chatTokenOptionsWithOperationId => Options(headers: {
+        'token': Store().loginCertificate?.chatToken,
+        'operationID': Utils.operationID()
+      });
+
   // static Options get chatTokenOptions =>
   //     Options(headers: {'token': DataSp.chatToken});
 
@@ -111,10 +116,11 @@ class Apis {
       bool agree,
       ) async {
     try {
+      print(Store().loginCertificate?.userID);
       await HttpUtil.post(Urls.addFriendResp,
           data: {
-            'fromUserID': Store().loginCertificate?.userID,
-            'toUserID': userId,
+            'fromUserID': userId,
+            'toUserID': Store().loginCertificate?.userID,
             'handleResult': agree? 1:-1,
             'handleMsg': msg
           },
@@ -127,8 +133,9 @@ class Apis {
   }
 
   /// https://doc.rentsoft.cn/restapi/friendsManagement/getRecvApplication
-  static Future<GetFriendApplyListResp> getFriendApplyList() async {
+  static Future<FriendApplyListResp> getFriendApplyList() async {
     try {
+      // print('userid is ${Store().loginCertificate?.userID}');
       var data = await HttpUtil.post(Urls.getFriendApplyList,
           data: {
             'userID': Store().loginCertificate?.userID,
@@ -138,7 +145,7 @@ class Apis {
             }
           },
           options: imTokenOptionsWithOperationId);
-      return GetFriendApplyListResp.fromJson(data!);
+      return FriendApplyListResp.fromJson(data!);
     } catch (e, s) {
       print('e:$e s:$s');
       rethrow;
@@ -146,7 +153,7 @@ class Apis {
   }
 
   /// https://doc.rentsoft.cn/restapi/friendsManagement/getFriendList
-  static Future getFriendList() async {
+  static Future<GetFriendListResp> getFriendList() async {
     try {
       var data = await HttpUtil.post(Urls.getFriendList,
           data: {
@@ -162,6 +169,30 @@ class Apis {
       print('e:$e s:$s');
       rethrow;
     }
+  }
+
+  static Future<List<UserPublicInfo>?> searchUserPublicInfo({
+    required String content,
+    int pageNumber = 1,
+    int showNumber = 10,
+  }) async {
+    final data = await HttpUtil.post(
+      Urls.searchUserPublic,
+      data: {
+        'pagination': {'pageNumber': pageNumber, 'showNumber': showNumber},
+        'keyword': content,
+        // 'operationID': operationID,
+      },
+      options: chatTokenOptionsWithOperationId,
+    );
+    print(data);
+    // var total = data['total'];
+    if (data['users'] is List) {
+      return (data['users'] as List)
+          .map((e) => UserPublicInfo.fromJson(e))
+          .toList();
+    }
+    return null;
   }
 
 //

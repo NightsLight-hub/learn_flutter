@@ -1,27 +1,26 @@
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'config/config.dart';
-import 'global_state/model.dart';
-import 'global_state/state.dart';
+import '../../config/config.dart';
+import '../../global_state/model.dart';
+import '../../global_state/state.dart';
 
 // SessionBox 是对话的区域，包括消息展示和消息发送
 
 // SessionMessageBox 是消息展示区域
-class SessionMessageBox extends ConsumerStatefulWidget {
-  const SessionMessageBox({super.key});
+class ConversationMessageBox extends ConsumerStatefulWidget {
+  const ConversationMessageBox({super.key});
 
   @override
-  ConsumerState<SessionMessageBox> createState() {
-    return SessionMessageBoxState();
+  ConsumerState<ConversationMessageBox> createState() {
+    return ConversationMessageBoxState();
   }
 }
 
-class SessionMessageBoxState extends ConsumerState<SessionMessageBox> {
+class ConversationMessageBoxState extends ConsumerState<ConversationMessageBox> {
   late TextEditingController _inputController;
   late ScrollController _scrollController;
   late FocusNode _textFocusNode;

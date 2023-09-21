@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 
 class Config {
   static int messageMaxNumber = 10;
-  static String host = "172.31.224.93";
+  static String host = "172.31.225.54";
   //初始化全局信息
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();

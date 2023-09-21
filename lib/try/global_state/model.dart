@@ -7,7 +7,9 @@ import 'package:uuid/uuid.dart';
 enum PageType {
   login,
   register,
-  session,
+  chat,
+  contact,
+  appCenter,
 }
 
 
@@ -35,11 +37,23 @@ class AppStateNotifier extends StateNotifier<AppState> {
   AppStateNotifier() : super(const AppState());
 
   void login(UserInfo uInfo) {
-    state = AppState(pageType: PageType.session, userInfo: uInfo);
+    state = AppState(pageType: PageType.chat, userInfo: uInfo);
   }
 
   void register() {
     state = const AppState(pageType: PageType.register);
+  }
+
+  void chat() {
+    state = const AppState(pageType: PageType.chat);
+  }
+
+  void contact() {
+    state = const AppState(pageType: PageType.contact);
+  }
+
+  void appCenter() {
+    state = const AppState(pageType: PageType.appCenter);
   }
 
   void logout() {

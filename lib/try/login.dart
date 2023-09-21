@@ -17,7 +17,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String phoneNumber = "";
+  String phoneNumber = "15642550210";
   String nickName = "";
   String password = "";
 
@@ -46,6 +46,7 @@ class LoginPageState extends ConsumerState<LoginPage> {
                 children: [
                   ...[
                     TextFormField(
+                      initialValue: phoneNumber,
                       decoration: const InputDecoration(
                         filled: true,
                         hintText: '输入手机号',
@@ -123,9 +124,10 @@ class LoginPageState extends ConsumerState<LoginPage> {
         ref
             .read(appStateProvider.notifier)
             .login(UserInfo(certificate.userID, nickName, phoneNumber));
+        print('login successfully');
       });
     } catch (e) {
-      print(e);
+      print('login failed, err is $e');
     }
   }
 

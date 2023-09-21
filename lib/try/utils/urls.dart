@@ -16,7 +16,7 @@ class Urls {
   // static final updateUserInfo = "${Config.appAuthUrl}/user/update";
 
   static final getUsersFullInfo = "${Config.appAuthUrl}/user/find/full";
-  static final searchUserFullInfo = "${Config.appAuthUrl}/user/search/full";
+  static final searchUserPublic = "${Config.appAuthUrl}/user/search/public";
 
   /// to B
   static final queryUserInfo = "${Config.appAuthUrl}/user/info";

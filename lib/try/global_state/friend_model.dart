@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FriendRequest {
   String fromUserID;
@@ -55,18 +58,16 @@ class FriendRequest {
 }
 
 ///  https://doc.rentsoft.cn/restapi/friendsManagement/getRecvApplication
-class GetFriendApplyListResp{
+class FriendApplyListResp {
   List<FriendRequest> friendRequests = [];
   int total = 0;
-  GetFriendApplyListResp.fromJson(Map<String, dynamic> map) {
-    if (map['data'] !=null){
-      final data = map['data'] as Map<String, dynamic>;
-      if (data['FriendRequests'] != null){
-        final list = data['FriendRequests'] as List<dynamic>;
-        friendRequests = list.map((e) => FriendRequest.fromJson(e)).toList();
+
+  FriendApplyListResp.fromJson(Map<String, dynamic> map) {
+    if (map['FriendRequests'] != null) {
+      final list = map['FriendRequests'] as List<dynamic>;
+      friendRequests = list.map((e) => FriendRequest.fromJson(e)).toList();
       }
-      total = data['total'] as int;
-    }
+    total = map['total'] as int;
   }
 
   Map<String, dynamic> toJson() {
@@ -82,6 +83,18 @@ class GetFriendApplyListResp{
   @override
   String toString() {
     return jsonEncode(this);
+  }
+}
+
+class FriendApplyListRespNotifier extends StateNotifier<FriendApplyListResp?> {
+  FriendApplyListRespNotifier() : super(null);
+
+  void set(FriendApplyListResp resp) {
+    state = resp;
+  }
+
+  void clear() {
+    state = null;
   }
 }
 
@@ -162,16 +175,14 @@ class FriendUser {
 class GetFriendListResp{
   List<FriendInfo> friendInfos = [];
   int total = 0;
-  GetFriendListResp.fromJson(Map<String, dynamic> map) {
-    if (map['data'] !=null){
-      final data = map['data'] as Map<String, dynamic>;
-      if (data['friendInfo'] != null){
-        final list = data['friendInfo'] as List<dynamic>;
+
+  GetFriendListResp.fromJson(Map<String, dynamic> data) {
+    if (data['friendsInfo'] != null){
+        final list = data['friendsInfo'] as List<dynamic>;
         friendInfos = list.map((e) => FriendInfo.fromJson(e)).toList();
       }
       total = data['total'] as int;
     }
-  }
 
   Map<String, dynamic> toJson() {
     final ret = <String, dynamic>{};
@@ -189,5 +200,73 @@ class GetFriendListResp{
   }
 }
 
+class FriendInfoNotifier extends StateNotifier<List<FriendInfo>> {
+  FriendInfoNotifier() : super([]);
 
+  void add(FriendInfo friendInfo) {
+    state = [
+      ...state,
+      friendInfo,
+    ];
+  }
 
+  void set(List<FriendInfo> friendInfos) {
+    state = friendInfos;
+  }
+
+  void remove(String id) {
+    state = state.where((element) => element.friendUser.userID != id).toList();
+  }
+
+  void clear() {
+    state = [];
+  }
+}
+
+class ContactDetailNotifier extends StateNotifier<UserPublicInfo?> {
+  ContactDetailNotifier() : super(null);
+
+  void set(UserPublicInfo? userPublicInfo) {
+    state = userPublicInfo;
+  }
+
+  void clear() {
+    state = null;
+  }
+}
+
+class UserPublicInfo {
+  String userID;
+  String nickname;
+  String faceURL;
+  String account;
+  String email;
+  int level;
+  int gender;
+
+  UserPublicInfo.fromJson(Map<String, dynamic> map)
+      : userID = map["userID"] ?? '',
+        nickname = map["nickname"] ?? '',
+        faceURL = map["faceURL"] ?? '',
+        account = map["account"] ?? '',
+        email = map["email"] ?? 0,
+        level = map["level"] ?? 1,
+        gender = map["gender"] ?? 0;
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['userID'] = userID;
+    data['nickname'] = nickname;
+    data['faceURL'] = faceURL;
+    data['account'] = account;
+    data['email'] = email;
+    data['level'] = level;
+    data['gender'] = gender;
+    return data;
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
