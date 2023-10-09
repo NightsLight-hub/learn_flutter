@@ -1,5 +1,3 @@
-
-
 import '../config/config.dart';
 
 class Urls {
@@ -8,6 +6,9 @@ class Urls {
   static final userOnlineStatus =
       "${Config.imApiUrl}/user/get_users_online_status";
   static final queryAllUsers = "${Config.imApiUrl}/manager/get_all_users_uid";
+
+  // static final subscribeUser = '${Config.imApiUrl}/user/subscribe_users_status';
+  static final subscribeUser = '${Config.imApiUrl}/user/subscribe_users_status';
 
   /// toc
   static final updateUserInfo = "${Config.appAuthUrl}/user/update";
@@ -28,10 +29,11 @@ class Urls {
   static final register = "${Config.appAuthUrl}/account/register";
 
   static final addFriend = "${Config.imApiUrl}/friend/add_friend";
-
+  static final deleteFriend = "${Config.imApiUrl}/friend/delete_friend";
   static final addFriendResp = "${Config.imApiUrl}/friend/add_friend_response";
 
-  static final getFriendApplyList = "${Config.imApiUrl}/friend/get_friend_apply_list";
+  static final getFriendApplyList =
+      "${Config.imApiUrl}/friend/get_friend_apply_list";
 
   static final getFriendList = "${Config.imApiUrl}/friend/get_friend_list";
 
@@ -57,4 +59,14 @@ class Urls {
 
   /// 小程序
   static final uniMPUrl = '${Config.appAuthUrl}/applet/list';
+
+  // conversation
+  static final getConversation =
+      '${Config.imApiUrl}/conversation/get_conversation';
+  static final getAllConversations =
+      '${Config.imApiUrl}/conversation/get_all_conversations';
+  static final getConversations =
+      '${Config.imApiUrl}/conversation/get_conversations';
+  static final setConversations =
+      '${Config.imApiUrl}/conversation/set_conversations';
 }

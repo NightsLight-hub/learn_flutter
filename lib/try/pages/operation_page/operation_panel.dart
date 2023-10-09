@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/utils/Constant.dart';
+import 'package:learn_flutter/try/utils/logger.dart';
 
 import '../../_intern/tapable_avatar.dart';
 
@@ -43,7 +45,7 @@ class OperationPanel extends ConsumerWidget {
                     child: TapableAvatar(
                       avatarUrl: 'assets/images/avatarMan.jpg',
                       onTap: () {
-                        print("avatar tapped");
+                        logger.i("avatar tapped");
                       },
                     ),
                   ),
@@ -84,7 +86,7 @@ class OperationPanel extends ConsumerWidget {
                         size: 45,
                       ),
                       onPressed: () {
-                        print('没实现');
+                        logger.e('没实现');
                       }),
                 ],
               ),
@@ -149,7 +151,9 @@ class OperationPanel extends ConsumerWidget {
       // ),
     );
   }
+
   _logout(WidgetRef ref) {
     ref.read(appStateProvider.notifier).logout();
+    $sdk.close();
   }
 }

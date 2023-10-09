@@ -5,6 +5,7 @@ import 'package:learn_flutter/try/utils/store.dart';
 import 'api/apis.dart';
 import 'global_state/model.dart';
 import 'global_state/state.dart';
+import 'utils/logger.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -170,15 +171,14 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
     try {
       LoginCertificate certificate = await Apis.register(
           phone: phoneNumber, nickName: nickName, password: password);
-      Store().loginCertificate = certificate;
+      var userInfo = UserInfo(certificate.userID, nickName, phoneNumber);
+      Store().init(certificate, userInfo);
       // todo 处理登录人信息
       Future.delayed(const Duration(milliseconds: 500), () {
-        ref
-            .read(appStateProvider.notifier)
-            .login(UserInfo(certificate.userID, nickName, phoneNumber));
+        ref.read(appStateProvider.notifier).login(userInfo);
       });
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
   }
 }

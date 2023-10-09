@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
+import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
+import 'package:learn_flutter/try/utils/logger.dart';
 import 'package:learn_flutter/try/utils/store.dart';
 
 import 'api/apis.dart';
@@ -74,9 +79,10 @@ class LoginPageState extends ConsumerState<LoginPage> {
                         hintText: '输入密码',
                         labelText: '密码',
                       ),
+                      initialValue: 'sxy_1234',
                       obscureText: true,
                       onChanged: (value) {
-                          password = value;
+                        password = value;
                       },
                       onFieldSubmitted: (value) {
                         setState(() {
@@ -114,20 +120,21 @@ class LoginPageState extends ConsumerState<LoginPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    print("login user phone $phoneNumber, nickname: $nickName");
     try {
       LoginCertificate certificate =
           await Apis.login(phoneNumber: phoneNumber, password: password);
-      Store().loginCertificate = certificate;
+      var userInfo = UserInfo(certificate.userID, nickName, phoneNumber);
+      Store().init(certificate, userInfo);
+      logger.i(
+          "login user phone $phoneNumber, nickname: $nickName, userID: ${certificate.userID}");
+      $sdk.initSdk(Config.host, certificate, logger);
       // todo 处理登录人信息
       Future.delayed(const Duration(milliseconds: 500), () {
-        ref
-            .read(appStateProvider.notifier)
-            .login(UserInfo(certificate.userID, nickName, phoneNumber));
-        print('login successfully');
+        ref.read(appStateProvider.notifier).login(userInfo);
+        logger.i('login successfully');
       });
     } catch (e) {
-      print('login failed, err is $e');
+      logger.e('login failed, err is $e');
     }
   }
 

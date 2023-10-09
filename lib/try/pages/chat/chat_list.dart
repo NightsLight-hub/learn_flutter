@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_flutter/try/pages/chat/chat_panel.dart';
+import 'package:learn_flutter/try/utils/logger.dart';
 
 class ChatView extends ConsumerStatefulWidget {
   const ChatView({super.key});
@@ -35,7 +36,9 @@ class ChatListState extends ConsumerState<ChatView> {
         child: Row(
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300,),
+          constraints: const BoxConstraints(
+            maxWidth: 300,
+          ),
           child: Column(
             children: [
               _buildConversationSearchRow(),
@@ -65,7 +68,7 @@ class ChatListState extends ConsumerState<ChatView> {
           icon: const Icon(Icons.search),
           onPressed: () {
             if (_searchTextFieldController.text.isNotEmpty) {
-              print('search friend');
+              logger.e('search friend');
             }
           },
         ),

@@ -1,11 +1,13 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 
 import '../config/config.dart';
 import '../global_state/model.dart';
+import 'logger.dart';
 
-var dio = Dio();
+var dio = Dio(BaseOptions(
+  connectTimeout: const Duration(seconds: 5),
+  receiveTimeout: const Duration(seconds: 5),
+));
 
 class HttpUtil {
   HttpUtil._();
@@ -79,17 +81,17 @@ class HttpUtil {
       if (resp.errCode == 0) {
         return resp.data;
       } else {
-        print(resp.errDlt);
+        logger.i(resp.errDlt);
       }
       return Future.error(resp.errMsg);
     } catch (error) {
       if (error is DioError) {
         final errorMsg = '接口：$path  信息：${error.message}';
-        print(errorMsg);
+        logger.i(errorMsg);
         return Future.error(errorMsg);
       }
       final errorMsg = '接口：$path  信息：${error.toString()}';
-      print(errorMsg);
+      logger.i(errorMsg);
       return Future.error(error);
     }
   }
@@ -105,7 +107,7 @@ class HttpUtil {
   //   if (compress) {
   //     File? compressFile = await IMUtils.compressImageAndGetFile(File(path));
   //     compressPath = compressFile?.path;
-  //     Logger.print('compressPath: $compressPath');
+  //     Logger.logger.i('compressPath: $compressPath');
   //   }
   //   final bytes = await File(compressPath ?? path).readAsBytes();
   //   final mf = MultipartFile.fromBytes(bytes, filename: fileName);

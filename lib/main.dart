@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_flutter/try/api/apis.dart';
 import 'package:learn_flutter/try/config/config.dart';
-import 'package:learn_flutter/try/contact/add_friend_view.dart';
-import 'package:learn_flutter/try/contact/contact_view.dart';
+import 'package:learn_flutter/try/pages/contact/add_friend_view.dart';
+import 'package:learn_flutter/try/pages/contact/contact_view.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/login.dart';
 import 'package:learn_flutter/try/pages/chat/chat_list.dart';
 import 'package:learn_flutter/try/register_page.dart';
 import 'package:learn_flutter/try/utils/http_utils.dart';
-import 'package:learn_flutter/try/utils/store.dart';
-
+import 'package:learn_flutter/try/utils/logger.dart';
 import 'try/global_state/model.dart';
 import 'try/pages/operation_page/operation_panel.dart';
+import 'try/utils/Constant.dart';
 
 var currentPage = "login";
 
@@ -30,6 +30,7 @@ class SxyApp extends ConsumerStatefulWidget {
 class SxyAppState extends ConsumerState<SxyApp> {
   Timer? _timer;
 
+  //todo  将timer任务单独做一个类
   @override
   void initState() {
     // TODO: implement initState
@@ -115,13 +116,12 @@ class SxyAppState extends ConsumerState<SxyApp> {
 
   _startTimer() {
     _timer?.cancel();
-    _updateFriendApplyList();
+    // _updateFriendApplyList();
     _updateFriendList();
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _updateFriendApplyList();
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      // _updateFriendApplyList();
       _updateFriendList();
     });
-
   }
 
   _stopTimer() {
@@ -136,17 +136,18 @@ class SxyAppState extends ConsumerState<SxyApp> {
 
   _updateFriendList() {
     Apis.getFriendList().then((value) {
-      print(value);
       ref.read(contactsProvider.notifier).set(value.friendInfos);
+      var ids = value.friendInfos.map((e) => e.friendUser.userID).toList();
+      Apis.subscribeOrUnSubscribeUserStatus(ids, Constants.subscribe);
     });
   }
 }
 
 init() async {
-  Config.host = '172.31.237.139';
+  Config.host = '172.29.250.176';
   await Config.init();
   await HttpUtil.init();
-  await Store().init(Config.cachePath);
+  logger.i('learn_flutter start o(*￣▽￣*)ブ');
 }
 
 main() {

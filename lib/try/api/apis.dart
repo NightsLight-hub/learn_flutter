@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:learn_flutter/protocol/conversation/conversation.pbgrpc.dart';
 import 'package:learn_flutter/try/config/config.dart';
+import 'package:learn_flutter/try/global_state/conversation_model.dart';
 import 'package:learn_flutter/try/global_state/friend_model.dart';
+import 'package:learn_flutter/try/global_state/user_model.dart';
+import 'package:learn_flutter/try/utils/logger.dart';
 import 'package:learn_flutter/try/utils/urls.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
 
@@ -41,14 +45,14 @@ class Apis {
         'phoneNumber': phoneNumber,
         'email': '',
         'password': password,
-        'platform': Utils.platform,
+        'platform': Utils.platformWindows,
         'verifyCode': verificationCode,
         'account': phoneNumber,
         // 'operationID': operationID,
       });
       return LoginCertificate.fromJson(data!);
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('login failed', error: e, stackTrace: s);
       rethrow;
     }
   }
@@ -65,7 +69,7 @@ class Apis {
       var data = await HttpUtil.post(Urls.register, data: {
         'deviceID': Config.deviceID,
         'verifyCode': "666666",
-        'platform': Utils.platform,
+        'platform': Utils.platformWindows,
         // 'operationID': operationID,
         'invitationCode': "",
         'autoLogin': true,
@@ -83,7 +87,7 @@ class Apis {
       });
       return LoginCertificate.fromJson(data!);
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('register failed', error: e, stackTrace: s);
       rethrow;
     }
   }
@@ -104,30 +108,45 @@ class Apis {
           options: imTokenOptionsWithOperationId);
       return null;
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('addFriend failed', error: e, stackTrace: s);
+      rethrow;
+    }
+  }
+
+  static Future removeFriend(String friendUserId) async {
+    try {
+      await HttpUtil.post(Urls.deleteFriend,
+          data: {
+            'ownerUserId': Store().loginCertificate!.userID,
+            'friendUserID': friendUserId,
+          },
+          options: imTokenOptionsWithOperationId);
+      return null;
+    } catch (e, s) {
+      logger.e('removeFriend failed', error: e, stackTrace: s);
       rethrow;
     }
   }
 
   /// https://doc.rentsoft.cn/restapi/friendsManagement/processApplication
   static Future agreeAddFriend(
-      String userId,
-      String msg,
-      bool agree,
-      ) async {
+    String userId,
+    String msg,
+    bool agree,
+  ) async {
     try {
-      print(Store().loginCertificate?.userID);
+      logger.i(Store().loginCertificate?.userID);
       await HttpUtil.post(Urls.addFriendResp,
           data: {
             'fromUserID': userId,
             'toUserID': Store().loginCertificate?.userID,
-            'handleResult': agree? 1:-1,
+            'handleResult': agree ? 1 : -1,
             'handleMsg': msg
           },
           options: imTokenOptionsWithOperationId);
       return;
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('agreeAddFriend failed', error: e, stackTrace: s);
       rethrow;
     }
   }
@@ -135,19 +154,16 @@ class Apis {
   /// https://doc.rentsoft.cn/restapi/friendsManagement/getRecvApplication
   static Future<FriendApplyListResp> getFriendApplyList() async {
     try {
-      // print('userid is ${Store().loginCertificate?.userID}');
+      // logger.i('userid is ${Store().loginCertificate?.userID}');
       var data = await HttpUtil.post(Urls.getFriendApplyList,
           data: {
             'userID': Store().loginCertificate?.userID,
-            'pagination': {
-              'pageNumber': 1,
-              'showNumber': 20
-            }
+            'pagination': {'pageNumber': 1, 'showNumber': 20}
           },
           options: imTokenOptionsWithOperationId);
       return FriendApplyListResp.fromJson(data!);
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('getFriendApplyList failed', error: e, stackTrace: s);
       rethrow;
     }
   }
@@ -158,15 +174,12 @@ class Apis {
       var data = await HttpUtil.post(Urls.getFriendList,
           data: {
             'userID': Store().loginCertificate?.userID,
-            'pagination': {
-              'pageNumber': 1,
-              'showNumber': 20
-            }
+            'pagination': {'pageNumber': 1, 'showNumber': 20}
           },
           options: imTokenOptionsWithOperationId);
       return GetFriendListResp.fromJson(data!);
     } catch (e, s) {
-      print('e:$e s:$s');
+      logger.e('getFriendList failed', error: e, stackTrace: s);
       rethrow;
     }
   }
@@ -176,23 +189,67 @@ class Apis {
     int pageNumber = 1,
     int showNumber = 10,
   }) async {
-    final data = await HttpUtil.post(
-      Urls.searchUserPublic,
-      data: {
-        'pagination': {'pageNumber': pageNumber, 'showNumber': showNumber},
-        'keyword': content,
-        // 'operationID': operationID,
-      },
-      options: chatTokenOptionsWithOperationId,
-    );
-    print(data);
-    // var total = data['total'];
-    if (data['users'] is List) {
-      return (data['users'] as List)
-          .map((e) => UserPublicInfo.fromJson(e))
-          .toList();
+    try {
+      final data = await HttpUtil.post(
+        Urls.searchUserPublic,
+        data: {
+          'pagination': {'pageNumber': pageNumber, 'showNumber': showNumber},
+          'keyword': content,
+          // 'operationID': operationID,
+        },
+        options: chatTokenOptionsWithOperationId,
+      );
+      logger.i(data);
+      // var total = data['total'];
+      if (data['users'] is List) {
+        return (data['users'] as List)
+            .map((e) => UserPublicInfo.fromJson(e))
+            .toList();
+      }
+    } catch (e, s) {
+      logger.e('searchUserPublicInfo failed', error: e, stackTrace: s);
+      return null;
     }
-    return null;
+  }
+
+  // 1 subscribe  2 unsubscribe
+  static Future<List<UserStatus>?> subscribeOrUnSubscribeUserStatus(
+      List<String> ids, int genre) async {
+    try {
+      final data = await HttpUtil.post(
+        Urls.subscribeUser,
+        data: {
+          'userID': Utils.selfID(),
+          'userIDs': ids,
+          'genre': genre,
+        },
+        options: imTokenOptionsWithOperationId,
+      );
+      return (data['statusList'] as List)
+          .map((e) => UserStatus.fromJson(e))
+          .toList();
+    } catch (e) {
+      logger.e('subscribeOrUnSubscribeUserStatus failed', error: e);
+      return null;
+    }
+  }
+
+  static Future<List<ConversationModel>?> getAllConversations() async {
+    try {
+      final data = await HttpUtil.post(
+        Urls.getAllConversations,
+        data: {
+          'ownerUserID': Utils.selfID(),
+        },
+        options: imTokenOptionsWithOperationId,
+      );
+      return (data['conversations'] as List)
+          .map((e) => ConversationModel.fromJson(e))
+          .toList();
+    } catch (e) {
+      logger.e('getAllConversations failed', error: e);
+      return [];
+    }
   }
 
 //
@@ -239,7 +296,7 @@ class Apis {
 //     );
 //     return true;
 //   } catch (e, s) {
-//     Logger.print('e:$e s:$s');
+//     Logger.logger.i('e:$e s:$s');
 //     return false;
 //   }
 // }
@@ -375,7 +432,7 @@ class Apis {
 //     // IMViews.showToast(StrRes.sentSuccessfully);
 //     return true;
 //   }).catchError((e, s) {
-//     Logger.print('e:$e s:$s');
+//     Logger.logger.i('e:$e s:$s');
 //     return false;
 //   });
 // }

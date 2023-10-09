@@ -22,3 +22,7 @@ final contactDetailProvider = StateNotifierProvider<ContactDetailNotifier, UserP
 final friendApplyProvider = StateNotifierProvider<FriendApplyListRespNotifier, FriendApplyListResp?>((ref) {
   return FriendApplyListRespNotifier();
 });
+
+final selectedConversationProvider = StateNotifierProvider<SelectedConversationNotifier, String>((ref) {
+  return SelectedConversationNotifier('');
+});

@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path/path.dart' as p;
 
 class Config {
   static int messageMaxNumber = 10;
@@ -12,9 +10,6 @@ class Config {
   //初始化全局信息
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    var add = (await getApplicationDocumentsDirectory()).path;
-    cachePath = p.join(add, 'learn_flutter');
-    print('cache path is $cachePath');
     // await SpeechToTextUtil.instance.initSpeech();
 
     SystemChrome.setPreferredOrientations([

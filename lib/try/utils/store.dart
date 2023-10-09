@@ -1,5 +1,9 @@
 import 'package:hive/hive.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+import 'logger.dart';
 
 class Store {
   static final Store _instance = Store._();
@@ -7,35 +11,69 @@ class Store {
   Store._();
 
   factory Store() => _instance;
-  static const String allState = "allState";
+  static const String globalBox = "userState";
+  static const String conversationBox = "conversation";
   LoginCertificate? _loginCertificate;
 
-  LoginCertificate? get loginCertificate => _loginCertificate;
-
-  set loginCertificate(LoginCertificate? value) {
-    _loginCertificate = value!;
+  set loginCertificate(LoginCertificate value) {
+    _loginCertificate = value;
   }
 
+  UserInfo? _userInfo;
 
+  LoginCertificate get loginCertificate => _loginCertificate!;
+
+  String? get userID => _loginCertificate?.userID;
+
+  UserInfo get userInfo => _userInfo!;
+
+  set userInfo(UserInfo value) {
+    _userInfo = value;
+  }
 
   Map memData = <String, dynamic>{};
 
-  Future init(String cachePath) async {
+  Future init(LoginCertificate cert, UserInfo userInfo) async {
+    _loginCertificate = cert;
+    _userInfo = userInfo;
+    var add = (await getApplicationDocumentsDirectory()).path;
+    // 不同用户的hive数据库 文件放在不同目录，避免单机多实例报错
+    var cachePath = p.join(add, 'learn_flutter', userID);
+    logger.i('cache path is $cachePath');
     Hive.init(cachePath);
-    return Hive.openBox(allState);
+    await _initState();
   }
 
-  Future saveTempState(String key, dynamic value) async {
+  _initState() async {
+    await Hive.openBox(globalBox);
+    await Hive.openBox(conversationBox!);
+  }
+
+  Box getConversationBox() {
+    return Hive.box(conversationBox);
+  }
+
+  Box _globalBox() {
+    return Hive.box(globalBox);
+  }
+
+  openBox(String name) async {
+    await Hive.openBox(name);
+  }
+
+  getBox(String name) {
+    return Hive.box(name);
+  }
+
+  saveGlobalState(String key, dynamic value) async {
     memData[key] = value;
+    _globalBox().put(key, value);
   }
 
-  Future saveState(String key, dynamic value) async {
-    memData[key] = value;
-    var box = Hive.box(allState);
-    box.put(key, value);
-  }
-
-  dynamic getState(String key) {
-    return memData[key] ? memData[key] : Hive.box(allState).get(key);
+  dynamic getGlobalState(String key) async {
+    if (memData[key] == null) {
+      memData[key] = _globalBox().get(key);
+    }
+    return memData[key];
   }
 }

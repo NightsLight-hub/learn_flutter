@@ -12,7 +12,6 @@ enum PageType {
   appCenter,
 }
 
-
 @immutable
 class UserInfo {
   final String id;
@@ -20,7 +19,6 @@ class UserInfo {
   final String phoneNumber;
   const UserInfo(this.id, this.name, this.phoneNumber);
 }
-
 
 @immutable
 class AppState {
@@ -148,7 +146,6 @@ class IMApiResp {
   }
 }
 
-
 // chat system api response
 class ApiResp {
   int errCode;
@@ -206,4 +203,17 @@ class ApiError {
     '50005': '创建错误',
   };
   static const _errorEN = {};
+}
+
+class SelectedConversationNotifier extends StateNotifier<String> {
+  SelectedConversationNotifier([String? initialConversationId])
+      : super(initialConversationId ?? '');
+
+  set(String id) {
+    state = id;
+  }
+
+  get() {
+    return state;
+  }
 }

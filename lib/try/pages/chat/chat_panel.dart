@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/try/pages/chat/conversation.dart';
+import 'package:learn_flutter/try/pages/chat/conversation_message_box.dart';
 
 class ChatPanel extends ConsumerWidget {
   const ChatPanel({super.key});
