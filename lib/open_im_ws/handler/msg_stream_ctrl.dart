@@ -5,7 +5,7 @@ import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:learn_flutter/protocol/sdkws/sdkws.pb.dart';
 
 import '../constant.dart';
-import '../database/sdk_db.dart';
+import '../database/dbController.dart';
 import '../model/message.dart';
 import '../utils.dart';
 

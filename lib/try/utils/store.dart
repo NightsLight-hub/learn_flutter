@@ -27,6 +27,8 @@ class Store {
 
   UserInfo get userInfo => _userInfo!;
 
+  String? cachePath;
+
   set userInfo(UserInfo value) {
     _userInfo = value;
   }
@@ -38,7 +40,7 @@ class Store {
     _userInfo = userInfo;
     var add = (await getApplicationDocumentsDirectory()).path;
     // 不同用户的hive数据库 文件放在不同目录，避免单机多实例报错
-    var cachePath = p.join(add, 'learn_flutter', userID);
+    cachePath = p.join(add, 'learn_flutter', userID);
     logger.i('cache path is $cachePath');
     Hive.init(cachePath);
     await _initState();

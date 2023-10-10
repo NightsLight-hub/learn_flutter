@@ -127,7 +127,7 @@ class LoginPageState extends ConsumerState<LoginPage> {
       Store().init(certificate, userInfo);
       logger.i(
           "login user phone $phoneNumber, nickname: $nickName, userID: ${certificate.userID}");
-      $sdk.initSdk(Config.host, certificate, logger);
+      $sdk.initSdk(Config.host, Store().cachePath, certificate, logger);
       // todo 处理登录人信息
       Future.delayed(const Duration(milliseconds: 500), () {
         ref.read(appStateProvider.notifier).login(userInfo);

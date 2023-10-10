@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:fixnum/fixnum.dart' as fix;
+import 'package:learn_flutter/open_im_ws/database/dbController.dart';
 import 'package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart';
 import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/try/utils/Constant.dart';
@@ -167,7 +168,10 @@ class OpenIMSdk {
     });
     PushMessageStreamController().run();
     await _listenWsMsg();
+    _loadLocal();
   }
+
+  _loadLocal() {}
 
   init(String url) async {
     uri = Uri.parse(url);
@@ -182,7 +186,8 @@ class OpenIMSdk {
   }
 }
 
-initSdk(String host, LoginCertificate certificate, Logger logger) async {
+initSdk(String host, String cachePath, LoginCertificate certificate,
+    Logger logger) async {
   var url = 'ws://$host:10001?sendID=${certificate.userID}'
       // var url = 'ws://127.0.0.1:10001?sendID=${certificate.userID}'
       '&token=${certificate.imToken}&platformID=${Utils.platformWindows}'
@@ -190,6 +195,7 @@ initSdk(String host, LoginCertificate certificate, Logger logger) async {
   try {
     OpenIMSdk().sdkLogger = logger;
     OpenIMSdk().loginCertificate = certificate;
+    Database().init(cachePath);
     await OpenIMSdk.instance.init(url);
     logger.i('init sdk by url $url succeeded');
   } catch (e) {
