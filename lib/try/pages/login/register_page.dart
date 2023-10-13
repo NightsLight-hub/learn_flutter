@@ -1,30 +1,26 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
-import 'package:learn_flutter/try/config/config.dart';
+import 'package:learn_flutter/try/api/apis.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
+import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
 import 'package:learn_flutter/try/utils/store.dart';
 
-import 'api/apis.dart';
-import 'global_state/state.dart';
-
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
-    return LoginPageState();
+    return RegisterPageState();
   }
 }
 
-class LoginPageState extends ConsumerState<LoginPage> {
+class RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  String phoneNumber = "15642550210";
+  String phoneNumber = "";
   String nickName = "";
   String password = "";
+  String password2 = "";
 
   @override
   void initState() {
@@ -40,35 +36,51 @@ class LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Align(
             alignment: Alignment.center,
-            child: Container(
+            child: SizedBox(
               width: 400,
-              // constraints: const BoxConstraints(maxWidth: 400, maxHeight: 300),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ...[
                     TextFormField(
-                      initialValue: phoneNumber,
                       decoration: const InputDecoration(
                         filled: true,
                         hintText: '输入手机号',
                         labelText: '手机号',
                       ),
                       onChanged: (value) {
-                        phoneNumber = value;
+                        setState(() {
+                          phoneNumber = value;
+                        });
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return '输入手机号码';
+                          return '输入手机号！！！';
                         }
                         RegExp r = RegExp(
                             '(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}');
-                        String? tmp = r.stringMatch(value);
-                        if (tmp == null || tmp.isEmpty || tmp != value) {
+                        if (r.stringMatch(value) != value) {
                           return '请输入有效的手机号码';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        hintText: '输入昵称',
+                        labelText: '昵称',
+                      ),
+                      onChanged: (value) {
+                        nickName = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '输入昵称！！！';
                         }
                         return null;
                       },
@@ -79,16 +91,11 @@ class LoginPageState extends ConsumerState<LoginPage> {
                         hintText: '输入密码',
                         labelText: '密码',
                       ),
-                      initialValue: 'sxy_1234',
                       obscureText: true,
                       onChanged: (value) {
-                        password = value;
-                      },
-                      onFieldSubmitted: (value) {
                         setState(() {
                           password = value;
                         });
-                        loginHandler();
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -97,15 +104,51 @@ class LoginPageState extends ConsumerState<LoginPage> {
                         return null;
                       },
                     ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        hintText: '请再次输入密码',
+                        labelText: '密码',
+                      ),
+                      obscureText: true,
+                      onChanged: (value) {
+                        setState(() {
+                          password2 = value;
+                        });
+                      },
+                      onFieldSubmitted: (value) {
+                        setState(() {
+                          password2 = value;
+                        });
+                        registerUser();
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '输入密码！！！';
+                        }
+                        if (value != password) {
+                          return '两次输入密码不一致！！！';
+                        }
+                        return null;
+                      },
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
-                          onPressed: loginHandler,
-                          child: const Text('登录'),
+                          style: const ButtonStyle(
+                            minimumSize:
+                                MaterialStatePropertyAll(Size(100, 35)),
+                          ),
+                          onPressed: backToLogin,
+                          child: const Text('返回登录'),
                         ),
                         ElevatedButton(
-                          onPressed: registerHandler,
+                          style: const ButtonStyle(
+                            minimumSize:
+                                MaterialStatePropertyAll(Size(100, 35)),
+                          ),
+                          onPressed: registerUser,
                           child: const Text('注册'),
                         ),
                       ],
@@ -116,29 +159,25 @@ class LoginPageState extends ConsumerState<LoginPage> {
             )));
   }
 
-  loginHandler() async {
+  backToLogin() async {
+    ref.read(appStateProvider.notifier).logout();
+  }
+
+  registerUser() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     try {
-      LoginCertificate certificate =
-          await Apis.login(phoneNumber: phoneNumber, password: password);
+      LoginCertificate certificate = await Apis.register(
+          phone: phoneNumber, nickName: nickName, password: password);
       var userInfo = UserInfo(certificate.userID, nickName, phoneNumber);
       Store().init(certificate, userInfo);
-      logger.i(
-          "login user phone $phoneNumber, nickname: $nickName, userID: ${certificate.userID}");
-      $sdk.initSdk(Config.host, Store().cachePath, certificate, logger);
       // todo 处理登录人信息
       Future.delayed(const Duration(milliseconds: 500), () {
         ref.read(appStateProvider.notifier).login(userInfo);
-        logger.i('login successfully');
       });
     } catch (e) {
-      logger.e('login failed, err is $e');
+      logger.e(e);
     }
-  }
-
-  registerHandler() async {
-    ref.read(appStateProvider.notifier).register();
   }
 }

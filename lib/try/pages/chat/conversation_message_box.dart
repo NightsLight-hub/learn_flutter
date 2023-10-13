@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
+import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/try/config/config.dart';
-import 'package:learn_flutter/try/global_state/model.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
+import 'package:learn_flutter/try/utils/utils.dart';
 
 // SessionMessageBox 是消息展示区域
 class ConversationMessageBox extends ConsumerStatefulWidget {
-  const ConversationMessageBox({super.key});
+  final ConversationModel cv;
+
+  const ConversationMessageBox({required this.cv, super.key});
 
   @override
   ConsumerState<ConversationMessageBox> createState() {
@@ -22,15 +28,12 @@ class ConversationMessageBoxState
   late ScrollController _scrollController;
   late FocusNode _textFocusNode;
   // 1816528707 is sunxy   2281402093 is jasmine
-  String toUserId = '2281402093';
-  // late Conversation conversation;
+
+  // List<MessageModel> _messages = [];
 
   @override
   void initState() {
     super.initState();
-    // var cvID = ref.watch(selectedConversationProvider);
-    // conversation =
-    //     Store().getConversation(cvID) ?? Store().conversationMap.values.first;
     _textFocusNode = FocusNode();
     _inputController = TextEditingController();
     _scrollController = ScrollController();
@@ -58,17 +61,19 @@ class ConversationMessageBoxState
   }
 
   Widget _buildMessageShowWidget() {
-    List<Message> messages = ref.watch(messagesProvider);
-    List<Message> renderMessages = messages.length > Config.messageMaxNumber
-        ? messages.sublist(messages.length - Config.messageMaxNumber)
+    var messages = ref.watch(messagesProvider);
+    List<MessageModel> renderMessages = messages.length >
+            Config.defaultMessageShowNumber
+        ? messages.sublist(messages.length - Config.defaultMessageShowNumber)
         : messages;
+    _scrollToBottom();
     return Expanded(
         child: ListView.builder(
       padding: const EdgeInsets.all(10),
       controller: _scrollController,
       itemCount: renderMessages.length,
       itemBuilder: (context, index) {
-        if (renderMessages[index].sender != 'Sunxy') {
+        if (renderMessages[index].sendID != Utils.selfID()) {
           return renderMessage(renderMessages[index]);
         } else {
           return renderMessage(renderMessages[index], isSelf: true);
@@ -108,27 +113,28 @@ class ConversationMessageBoxState
     if (msg.trim().isEmpty) {
       return;
     }
-    // setState(() {
     try {
-      // Random().nextBool()
-      //     ? ref.read(messagesProvider.notifier).add(Message(msg, 'Sunxy'))
-      //     : ref.read(messagesProvider.notifier).add(Message(msg, 'Jasmine'));
-      // ref.read(messagesProvider.notifier).add(Message(msg, 'Sunxy'));
-      $sdk.sendTextMessage(msg, toUserId);
-      // todo sendTextMessage
+      $sdk.sendTextMessage(Utils.uuid(), msg, widget.cv.userId!);
+    } catch (e, s) {
+      logger.e('sendTextMessage failed', error: e, stackTrace: s);
     } finally {
       _inputController.clear();
       _textFocusNode.requestFocus();
+      _scrollToBottom();
     }
+  }
 
+  _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 50), () {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
 
   // 渲染消息， 用于抽象不同消息类型的展示
-  Row renderMessage(Message msg, {bool isSelf = false}) {
-    return _renderText(msg.sender, msg.content, isSelf: isSelf);
+  Row renderMessage(MessageModel msg, {bool isSelf = false}) {
+    var contentStr = utf8.decode(msg.content!);
+    var json = jsonDecode(contentStr);
+    return _renderText(msg.senderNickname!, json['Text'], isSelf: isSelf);
   }
 
   /// RenderText is used to render message

@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 class Config {
-  static int messageMaxNumber = 10;
-  static String host = "172.31.225.54";
+  static String host = "172.28.88.122";
+  static int defaultMessageShowNumber = 50;
   //初始化全局信息
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();

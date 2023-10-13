@@ -7,6 +7,7 @@ import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
 import 'package:learn_flutter/try/utils/http_utils.dart';
 import 'package:learn_flutter/try/utils/store.dart';
+import 'package:learn_flutter/try/utils/utils.dart';
 import 'package:logger/logger.dart';
 
 void main() {
@@ -18,14 +19,14 @@ void main() {
         await Apis.login(phoneNumber: '15642550210', password: 'sxy_1234');
     Store().loginCertificate = cert;
     Store().userInfo = UserInfo(cert.userID, "15642550210", '15642550210');
-    await $sdk.initSdk(Config.host, cert, Logger());
+    await $sdk.initSdk(Config.host, './test', cert, Logger());
     // await Store().init(Config.cachePath);
   });
   test('getNewestSeqReq', () async {
-    $sdk.getNewestSeqReq();
+    $sdk.getNewestSeq();
     sleep(const Duration(seconds: 100));
   });
   test('sendMessage', () async {
-    $sdk.sendTextMessage('test message', '2281402093');
+    $sdk.sendTextMessage(Utils.uuid(), 'test message', '2281402093');
   });
 }

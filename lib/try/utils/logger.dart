@@ -9,10 +9,12 @@ Logger _logger = Logger(
     methodCount: 1,
     errorMethodCount: 8,
     colors: false,
+    lineLength: 100,
     printEmojis: false,
     printTime: true,
     excludeBox: {
       Level.info: true,
+      Level.warning: true,
     },
   ),
   level: Level.debug,

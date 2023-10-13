@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:learn_flutter/protocol/conversation/conversation.pbgrpc.dart';
 import 'package:learn_flutter/try/config/config.dart';
-import 'package:learn_flutter/try/global_state/conversation_model.dart';
 import 'package:learn_flutter/try/global_state/friend_model.dart';
 import 'package:learn_flutter/try/global_state/user_model.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
@@ -234,7 +232,7 @@ class Apis {
     }
   }
 
-  static Future<List<ConversationModel>?> getAllConversations() async {
+  static Future<List<ConversationStruct>?> getAllConversations() async {
     try {
       final data = await HttpUtil.post(
         Urls.getAllConversations,
@@ -244,7 +242,7 @@ class Apis {
         options: imTokenOptionsWithOperationId,
       );
       return (data['conversations'] as List)
-          .map((e) => ConversationModel.fromJson(e))
+          .map((e) => ConversationStruct.fromJson(e))
           .toList();
     } catch (e) {
       logger.e('getAllConversations failed', error: e);

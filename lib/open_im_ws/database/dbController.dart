@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:isar/isar.dart';
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 
@@ -23,52 +21,67 @@ class Database {
   init(String cachePath) {
     if (inited) {
       logger.w('database reinit');
-    } else {
-      isar = Isar.openSync([ConversationSchema, MessageSchema],
+      return;
+    }
+    try {
+      isar = Isar.openSync([ConversationModelSchema, MessageModelSchema],
           directory: cachePath);
+    } catch (e) {
+      if (e.toString().contains('Instance has already been opened')) {
+        logger.w('database reinit');
+      } else {
+        rethrow;
+      }
     }
   }
 
   static Database get instance => _inst;
 
-  Future<Conversation?> getConversation(String conversationId) async {
-    return isar.conversations
+  Future<ConversationModel?> getConversation(String conversationId) async {
+    return isar.conversationModels
         .getByIndex(indexNameConversationID, [conversationId]);
   }
 
-  Future<Id> insertConversation(Conversation cv) async {
-    return isar.conversations.put(cv);
+  Future<List<ConversationModel>> getAllConversations() async {
+    return isar.conversationModels.where().findAll();
   }
 
-  updateConversation(Conversation cv) async {
-    isar.conversations.putByIndex(indexNameConversationID, cv);
+  Future<Id> insertConversation(ConversationModel cv) async {
+    return isar.writeTxn(() async {
+      return isar.conversationModels.put(cv);
+    });
   }
 
-  Future<int> insertMessage(String conversationId, Message msg) async {
-    var cv = await getConversation(conversationId);
-    if (cv == null) {
-      cv = Conversation();
-      cv
-        ..conversationID = conversationId
-        ..conversationType = msg.sessionType
-        ..userId = msg.recvID
-        ..showName = msg.senderNickname
-        ..minSeq = msg.seq
-        ..maxSeq = msg.seq
-        ..lastMessageTime = msg.sendTime
-        ..lastMessage = utf8.encode(jsonEncode(msg));
-      await insertConversation(cv);
-    }
-    return isar.messages.put(msg);
+  Future<Id> updateConversation(ConversationModel cv) async {
+    return isar.writeTxn(() async {
+      return isar.conversationModels.putByIndex(indexNameConversationID, cv);
+    });
   }
 
-  Future<List<Message>> getConversationMessageBySeqRange(
+  updateConversationAndInsertMessage(
+      ConversationModel cv, List<MessageModel> messages) {
+    return isar.writeTxn(() async {
+      isar.conversationModels.putByIndex(indexNameConversationID, cv);
+      isar.messageModels.putAll(messages);
+    });
+  }
+
+  /// messages
+
+  Future<int> insertMessage(String conversationId, MessageModel msg) async {
+    return isar.writeTxn(() async {
+      return isar.messageModels.put(msg);
+    });
+  }
+
+  Future<List<MessageModel>> getConversationMessageBySeqRange(
       String conversationId, int begin, int end) async {
-    return isar.messages
+    return isar.messageModels
         .filter()
         .conversationIDEqualTo(conversationId)
         .and()
         .seqBetween(begin, end)
+        .sortBySeq()
         .findAll();
   }
 }

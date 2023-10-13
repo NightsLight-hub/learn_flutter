@@ -8,13 +8,15 @@ import '../utils.dart' as utils;
 part 'db_model.g.dart';
 
 @collection
-class Conversation {
+class ConversationModel {
   Id? id;
 
   @Index()
   String? conversationID;
   int? conversationType;
+  String? ownerUserId;
   String? userId;
+  String? groupId;
   String? showName;
   List<int>? lastMessage;
   int? maxSeq;
@@ -23,10 +25,10 @@ class Conversation {
 }
 
 @collection
-class Message {
-  Message();
+class MessageModel {
+  MessageModel();
 
-  Message.text(
+  MessageModel.text(
     String text, {
     required this.recvID,
     this.serverMsgID = '',
@@ -52,7 +54,7 @@ class Message {
 
   Id? id;
 
-  @Index()
+  @Index(unique: true, replace: true)
   String? conversationID;
 
   String? clientMsgID;
@@ -77,7 +79,7 @@ class Message {
   String? groupID = '';
   List<int>? content;
 
-  @Index()
+  @Index(unique: true, replace: true)
   int? seq;
 
   bool? isRead;
@@ -90,23 +92,34 @@ class Message {
 
   @ignore
   TextElem? textElem;
-// sdkws.OfflinePushInfo offlinePush;
 
-// CardElem? cardElem;
-// PictureElem? pictureElem;
-// SoundElem? soundElem;
-// VideoElem? videoElem;
-// FileElem? fileElem;
-// MergeElem? mergeElem;
-// AtTextElem? atTextElem;
-// FaceElem? faceElem;
-// LocationElem? locationElem;
-// CustomElem? customElem;
-// QuoteElem? quoteElem;
-// NotificationElem? notificationElem;
-// AdvancedTextElem? advancedTextElem;
-// TypingElem? typingElem;
-// AttachedInfoElem? attachedInfoElem;
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationID': conversationID,
+      'clientMsgID': clientMsgID,
+      'serverMsgID': serverMsgID,
+      'createTime': createTime,
+      'sendTime': sendTime,
+      'sessionType': sessionType,
+      'sendID': sendID,
+      'recvID': recvID,
+      'msgFrom': msgFrom,
+      'contentType': contentType,
+      'senderPlatformID': senderPlatformID,
+      'senderNickname': senderNickname,
+      'senderFaceURL': senderFaceURL,
+      'groupID': groupID,
+      'content': content,
+      'seq': seq,
+      'isRead': isRead,
+      'status': status,
+      'isReact': isReact,
+      'isExternalExtensions': isExternalExtensions,
+      'attachedInfo': attachedInfo,
+      'ex': ex,
+      'localEx': localEx,
+    };
+  }
 }
 
 class TextElem {

@@ -32,13 +32,13 @@ class EventHandlers {
     }
   }
 
-  applyOnNewConversation(Conversation conversation) {
+  applyOnNewConversation(ConversationModel conversation) {
     if (onNewConversation != null) {
       onNewConversation!(conversation);
     }
   }
 
-  applyOnConversationChanged(Conversation conversation) {
+  applyOnConversationChanged(ConversationModel conversation) {
     if (onConversationChanged != null) {
       onConversationChanged!(conversation);
     }

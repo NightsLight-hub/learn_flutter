@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
+import 'package:learn_flutter/open_im_ws/handler/helper.dart';
+import 'package:learn_flutter/open_im_ws/handler/syncer.dart';
 import 'package:learn_flutter/protocol/sdkws/sdkws.pb.dart';
 
 import '../constant.dart';
-import '../database/dbController.dart';
-import '../model/message.dart';
 import '../utils.dart';
 
 class PushMessageStreamController {
@@ -56,23 +56,15 @@ class PushMessageStreamController {
   }
 
   _handleTextMsg(String conversationId, MsgData msg) async {
-    if (msg.sendID == selfID()) {
-      // ignore self msg
-      logger.w('ignore self message');
-      return;
-    }
-    if (msg.seq == 0) {
-      await Database().createConversation(Conversation(
-          conversationID: conversationId,
-          conversationType: msg.sessionType,
-          userId: msg.recvID,
-          showName: msg.senderNickname));
-    }
-    Database().insertMessage(conversationId, msg);
+    MessageModel msgModel = convertToMessage(conversationId, msg);
+    // 更新会话
+    await Syncer().updateConversation(conversationId, msgModel);
+    await Syncer().newMessage(conversationId, msgModel);
     // debug code
     var contentStr = utf8.decode(msg.content);
     var content = TextElem.fromJson(jsonDecode(contentStr));
-    logger.d('get msg from ${msg.sendID} ${content.content}');
+    logger.d(
+        '_handleTextMsg get msg conversationId $conversationId from ${msg.sendID} ${content.content}');
   }
 
   _handleUserStatusChangeNotification(MsgData msg) {

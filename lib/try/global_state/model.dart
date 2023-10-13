@@ -1,7 +1,9 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:uuid/uuid.dart';
 
 enum PageType {
@@ -76,25 +78,6 @@ class Message {
       {String? id, String? content, String? sender, DateTime? time}) {
     return Message.from(id ?? this.id, content ?? this.content,
         sender ?? this.sender, time ?? this.time);
-  }
-}
-
-class Messages extends StateNotifier<List<Message>> {
-  Messages([List<Message>? initialMessages]) : super(initialMessages ?? []);
-
-  void add(Message msg) {
-    state = [
-      ...state,
-      msg,
-    ];
-  }
-
-  void remove(String id) {
-    state = state.where((element) => element.id != id).toList();
-  }
-
-  void clear() {
-    state = [];
   }
 }
 
@@ -205,15 +188,135 @@ class ApiError {
   static const _errorEN = {};
 }
 
-class SelectedConversationNotifier extends StateNotifier<String> {
-  SelectedConversationNotifier([String? initialConversationId])
-      : super(initialConversationId ?? '');
+class SelectedConversationNotifier extends StateNotifier<ConversationModel?> {
+  SelectedConversationNotifier() : super(null);
 
-  set(String id) {
-    state = id;
+  set(ConversationModel cv) {
+    state = cv;
   }
 
   get() {
     return state;
+  }
+}
+
+class ConversationStruct {
+  String? ownerUserID;
+  String? conversationID;
+  int? recvMsgOpt;
+  int? conversationType;
+  String? userID;
+  String? groupID;
+  bool? isPinned;
+  String? attachedInfo;
+  bool? isPrivateChat;
+  int? groupAtType;
+  String? ex;
+  int? burnDuration;
+  int? minSeq;
+  int? maxSeq;
+  int? msgDestructTime;
+  int? latestMsgDestructTime;
+  bool? isMsgDestruct;
+
+  ConversationStruct({
+    this.ownerUserID,
+    this.conversationID,
+    this.recvMsgOpt,
+    this.conversationType,
+    this.userID,
+    this.groupID,
+    this.isPinned,
+    this.attachedInfo,
+    this.isPrivateChat,
+    this.groupAtType,
+    this.ex,
+    this.burnDuration,
+    this.minSeq,
+    this.maxSeq,
+    this.msgDestructTime,
+    this.latestMsgDestructTime,
+    this.isMsgDestruct,
+  });
+
+  ConversationStruct.fromJson(Map<String, dynamic> json) {
+    ownerUserID = json['ownerUserID'];
+    conversationID = json['conversationID'];
+    recvMsgOpt = json['recvMsgOpt'];
+    conversationType = json['conversationType'];
+    userID = json['userID'];
+    groupID = json['groupID'];
+    isPinned = json['isPinned'];
+    attachedInfo = json['attachedInfo'];
+    isPrivateChat = json['isPrivateChat'];
+    groupAtType = json['groupAtType'];
+    ex = json['ex'];
+    burnDuration = json['burnDuration'];
+    minSeq = json['minSeq'];
+    maxSeq = json['maxSeq'];
+    msgDestructTime = json['msgDestructTime'];
+    latestMsgDestructTime = json['latestMsgDestructTime'];
+    isMsgDestruct = json['isMsgDestruct'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['ownerUserID'] = ownerUserID;
+    data['conversationID'] = conversationID;
+    data['recvMsgOpt'] = recvMsgOpt;
+    data['conversationType'] = conversationType;
+    data['userID'] = userID;
+    data['groupID'] = groupID;
+    data['isPinned'] = isPinned;
+    data['attachedInfo'] = attachedInfo;
+    data['isPrivateChat'] = isPrivateChat;
+    data['groupAtType'] = groupAtType;
+    data['ex'] = ex;
+    data['burnDuration'] = burnDuration;
+    data['minSeq'] = minSeq;
+    data['maxSeq'] = maxSeq;
+    data['msgDestructTime'] = msgDestructTime;
+    data['latestMsgDestructTime'] = latestMsgDestructTime;
+    data['isMsgDestruct'] = isMsgDestruct;
+    return data;
+  }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+}
+
+class MessagesNotifier extends StateNotifier<List<MessageModel>> {
+  MessagesNotifier() : super([]);
+
+  void add(List<MessageModel> msgs) {
+    // todo 此处可能有性能问题，后续优化，可以改为两个有序列表的去重合并，O(n+m) 即可完成
+    msgs.addAll(state);
+    var m = <int, MessageModel>{};
+    // 去重
+    for (var msg in msgs) {
+      m[msg.seq!] = msg;
+    }
+    msgs = m.values.toList();
+    msgs.sort((a, b) => a.seq!.compareTo(b.seq!));
+    state = [
+      ...msgs,
+    ];
+  }
+
+  void clearAndAdd(List<MessageModel> msgs) {
+    msgs.sort((a, b) => a.seq!.compareTo(b.seq!));
+    state = [
+      ...msgs,
+    ];
+  }
+
+  void remove(String id) {
+    state = state.where((element) => element.id != id).toList();
+  }
+
+  void clear() {
+    state = [];
   }
 }

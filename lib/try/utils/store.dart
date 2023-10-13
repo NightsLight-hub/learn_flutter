@@ -6,38 +6,27 @@ import 'package:path_provider/path_provider.dart';
 import 'logger.dart';
 
 class Store {
-  static final Store _instance = Store._();
+  Store._internal();
 
-  Store._();
-
+  static final Store _instance = Store._internal();
   factory Store() => _instance;
+
   static const String globalBox = "userState";
   static const String conversationBox = "conversation";
-  LoginCertificate? _loginCertificate;
+  late LoginCertificate loginCertificate;
 
-  set loginCertificate(LoginCertificate value) {
-    _loginCertificate = value;
-  }
+  late UserInfo userInfo;
 
-  UserInfo? _userInfo;
+  String get userID => loginCertificate.userID;
 
-  LoginCertificate get loginCertificate => _loginCertificate!;
-
-  String? get userID => _loginCertificate?.userID;
-
-  UserInfo get userInfo => _userInfo!;
-
-  String? cachePath;
-
-  set userInfo(UserInfo value) {
-    _userInfo = value;
-  }
+  late String cachePath;
 
   Map memData = <String, dynamic>{};
 
-  Future init(LoginCertificate cert, UserInfo userInfo) async {
-    _loginCertificate = cert;
-    _userInfo = userInfo;
+  // init方法必须在Store的所有其他方法使用前调用，用于初始化内部的late变量
+  Future init(LoginCertificate cert, UserInfo info) async {
+    loginCertificate = cert;
+    userInfo = info;
     var add = (await getApplicationDocumentsDirectory()).path;
     // 不同用户的hive数据库 文件放在不同目录，避免单机多实例报错
     cachePath = p.join(add, 'learn_flutter', userID);

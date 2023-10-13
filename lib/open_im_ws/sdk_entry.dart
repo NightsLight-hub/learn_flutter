@@ -4,9 +4,10 @@ import 'dart:convert';
 import 'package:fixnum/fixnum.dart' as fix;
 import 'package:learn_flutter/open_im_ws/database/dbController.dart';
 import 'package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart';
+import 'package:learn_flutter/open_im_ws/handler/notify_message_handler.dart';
+import 'package:learn_flutter/open_im_ws/handler/syncer.dart';
 import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/try/utils/Constant.dart';
-import 'package:learn_flutter/try/utils/store.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
 import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
@@ -22,14 +23,13 @@ import 'model/common.dart';
 class OpenIMSdk {
   static final OpenIMSdk _instance = OpenIMSdk._internal();
 
-  factory OpenIMSdk() {
-    return _instance;
-  }
+  factory OpenIMSdk() => _instance;
 
   OpenIMSdk._internal();
 
   static OpenIMSdk get instance => _instance;
 
+  String get selfId => loginCertificate!.userID;
   IOWebSocketChannel? channel;
 
   IOWebSocketChannel get getChannel => channel!;
@@ -50,46 +50,55 @@ class OpenIMSdk {
   Function? onNewMessage;
   Function? onSyncStart;
   Function? onSyncEnd;
+  Function? onMessageSendSucceed;
 
-  applyOnConnected() {
+  invokeOnConnected() {
     if (onConnected != null) {
       onConnected!();
     }
   }
 
-  applyOnDisconnected(String reason) {
+  invokeOnDisconnected(String reason) {
     if (onDisconnected != null) {
       onDisconnected!(reason);
     }
   }
 
-  applyOnNewConversation(Conversation conversation) {
+  invokeOnNewConversation(ConversationModel conversation) {
     if (onNewConversation != null) {
       onNewConversation!(conversation);
     }
   }
 
-  applyOnConversationChanged(Conversation conversation) {
+  invokeOnConversationChanged(ConversationModel conversation) {
     if (onConversationChanged != null) {
       onConversationChanged!(conversation);
     }
   }
 
-  applyOnNewMessage(String conversationID, MsgData msg) {
+  // 不能保证msgs的id被赋值
+  invokeOnNewMessage(String conversationID, List<MessageModel> msgs) {
     if (onNewMessage != null) {
-      onNewMessage!(conversationID, msg);
+      onNewMessage!(conversationID, msgs);
     }
   }
 
-  applyOnSyncStart() {
+  invokeOnSyncStart() {
     if (onSyncStart != null) {
       onSyncStart!();
     }
   }
 
-  applyOnSyncEnd() {
+  invokeOnSyncEnd(Object? e) {
     if (onSyncEnd != null) {
-      onSyncEnd!();
+      onSyncEnd!(e);
+    }
+  }
+
+  // 消息发送成功的回调
+  invokeOnMessageSendSucceed(String msgClientId) {
+    if (onMessageSendSucceed != null) {
+      onMessageSendSucceed!(msgClientId);
     }
   }
 
@@ -113,13 +122,14 @@ class OpenIMSdk {
     var msgIncr = resp.msgIncr;
     if (respStreamMap.containsKey(msgIncr)) {
       respStreamMap[msgIncr]!.add(resp);
+    } else {
+      handleNotifyMessage(resp);
     }
-    logger.e(
-        'get message with unknown MsgIncr $msgIncr type $resp.reqIdentifier');
   }
 
   // 可以参考 openim-sdk-core internal/interaction/long_conn_mgr.go
   _listenWsMsg() async {
+    logger.d('listen websocket msg');
     channel!.stream.listen((event) {
       String str = utf8.decode(event);
       sdkLogger.t('get event from ws, $str');
@@ -145,33 +155,56 @@ class OpenIMSdk {
     }, onError: (err) {
       sdkLogger.i('get error from ws, $err');
     }, onDone: () {
-      var code = channel!.closeCode;
-      var reason = channel!.closeReason;
-      sdkLogger.i('ws channel close, [$code] $reason');
+      var code = channel?.closeCode;
+      var reason = channel?.closeReason;
+      sdkLogger.i('ws channel close [$code] $reason');
+      channel = null;
     });
+  }
+
+  // process websocket conn
+  _reConn() async {
+    try {
+      channel = IOWebSocketChannel.connect(uri!,
+          pingInterval: const Duration(seconds: 5));
+      logger.i('wait websocket channel to be ready');
+      await channel!.ready;
+      logger.i('websocket channel is ready');
+      await _listenWsMsg();
+    } catch (e, s) {
+      sdkLogger.e('websocket connect failed, err is $e, stack is $s');
+      channel = null;
+    }
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
+      if (channel == null || channel?.closeCode != null) {
+        sdkLogger.w('websocket connect failed, try to reconnect');
+        _reConn();
+      } else {
+        // sdkLogger.i('sendPing');
+        _pingToServer();
+      }
+    });
+    // 连接或者重连后，立刻触发一次消息同步
+    Syncer().syncLocal();
+  }
+
+  _pingToServer() async {
+    channel?.sink.add('9');
+    logger.t('ping and getNewestSeqReq');
+    try {
+      Syncer().sync();
+    } catch (e) {
+      logger.e(e.toString());
+    }
   }
 
   _init() async {
-    channel = IOWebSocketChannel.connect(uri!,
-        pingInterval: const Duration(seconds: 2));
-    if (channel != null) {
-      await channel?.ready;
-    }
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (channel == null || channel?.closeCode != null) {
-        _init();
-      } else {
-        // sdkLogger.i('sendPing');
-        channel!.sink.add('9');
-      }
-    });
+    // 先把streamController运行起来，确保ws连接后可以直接进行消息同步
     PushMessageStreamController().run();
-    await _listenWsMsg();
-    _loadLocal();
+    _reConn();
   }
-
-  _loadLocal() {}
 
   init(String url) async {
     uri = Uri.parse(url);
@@ -199,7 +232,8 @@ initSdk(String host, String cachePath, LoginCertificate certificate,
     await OpenIMSdk.instance.init(url);
     logger.i('init sdk by url $url succeeded');
   } catch (e) {
-    logger.i('init sdk by url $url failed, err is $e');
+    logger.e('init sdk by url $url failed, err is $e');
+    rethrow;
   }
 }
 
@@ -207,21 +241,21 @@ close() {
   OpenIMSdk().close();
 }
 
-sendTextMessage(String text, String recvID) {
+sendTextMessage(String clientId, String text, String recvID) {
   OpenIMSdk().sdkLogger.i('sendTextMessage, text is $text, recvID is $recvID');
-  Req req = helper.createMessageReq(text, recvID);
+  Req req = helper.createMessageReq(clientId, text, recvID);
   OpenIMSdk().sendReq(req);
 }
 
 // todo test this
-Future<Resp> getNewestSeqReq() async {
+Future<Resp> getNewestSeq() async {
   GetMaxSeqReq seqReq = GetMaxSeqReq(
     userID: Utils.selfID(),
   );
   Req req = Req(
     reqIdentifier: ReqSeqNumber.wSGetNewestSeq,
-    token: Store().loginCertificate!.imToken,
-    sendID: Store().loginCertificate!.userID,
+    token: OpenIMSdk().loginCertificate!.imToken,
+    sendID: OpenIMSdk().loginCertificate!.userID,
     msgIncr: Utils.getMsgIncr(),
     data: seqReq.writeToBuffer(),
   );
@@ -243,10 +277,21 @@ Future<Resp> pullMsgBySeqList(
   );
   Req req = Req(
     reqIdentifier: ReqSeqNumber.wSPullMsgBySeqList,
-    token: Store().loginCertificate!.imToken,
-    sendID: Store().loginCertificate!.userID,
+    token: OpenIMSdk().loginCertificate!.imToken,
+    sendID: OpenIMSdk().loginCertificate!.userID,
     msgIncr: Utils.getMsgIncr(),
     data: pullMessageBySeqsReq.writeToBuffer(),
   );
   return OpenIMSdk().sendReqAndWaitResp(req);
+}
+
+Future<List<ConversationModel>> getAllConversations() async {
+  return await Database().getAllConversations();
+}
+
+Future<List<MessageModel>> getMessages(
+    String conversationId, (int, int) range) {
+  var (begin, end) = range;
+  return Database()
+      .getConversationMessageBySeqRange(conversationId, begin, end);
 }
