@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
+import 'package:learn_flutter/open_im_ws/handler/helper.dart';
 import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/friend_model.dart';
 import 'package:learn_flutter/try/global_state/user_model.dart';
@@ -64,6 +66,12 @@ class Apis {
     int gender = 1,
   }) async {
     try {
+      String avatarUrl;
+      if (phone.startsWith('151')) {
+        avatarUrl = 'assets/images/jasmineAvatar.jpg';
+      } else {
+        avatarUrl = 'assets/images/sunxyAvatar.jpg';
+      }
       var data = await HttpUtil.post(Urls.register, data: {
         'deviceID': Config.deviceID,
         'verifyCode': "666666",
@@ -74,7 +82,7 @@ class Apis {
         'user': {
           "account": phone, // use nickname as account for now
           "nickname": nickName,
-          "faceURL": "",
+          "faceURL": avatarUrl,
           'birth': birth,
           'gender': gender,
           'email': "",
@@ -182,7 +190,7 @@ class Apis {
     }
   }
 
-  static Future<List<UserPublicInfo>?> searchUserPublicInfo({
+  static Future<List<UserPublicInfoModel>?> searchUserPublicInfoModel({
     required String content,
     int pageNumber = 1,
     int showNumber = 10,
@@ -201,12 +209,37 @@ class Apis {
       // var total = data['total'];
       if (data['users'] is List) {
         return (data['users'] as List)
-            .map((e) => UserPublicInfo.fromJson(e))
+            .map((e) => createUserInfoFromJson(e))
             .toList();
       }
+      return [];
     } catch (e, s) {
-      logger.e('searchUserPublicInfo failed', error: e, stackTrace: s);
+      logger.e('searchUserPublicInfoModel failed', error: e, stackTrace: s);
       return null;
+    }
+  }
+
+  static Future<List<UserPublicInfoModel>> getUserPublicInfoModel(
+      List<String> userIds) async {
+    try {
+      Map<String, dynamic> reqData = {
+        'userIDs': userIds,
+      };
+      final resp = await HttpUtil.post(
+        Urls.getUsersPublicInfo,
+        data: reqData,
+        options: chatTokenOptionsWithOperationId,
+      );
+      // logger.i(resp);
+      if (resp['users'] is List) {
+        return (resp['users'] as List)
+            .map((e) => createUserInfoFromJson(e))
+            .toList();
+      }
+      return [];
+    } catch (e, s) {
+      logger.e('searchUserPublicInfoModel failed', error: e, stackTrace: s);
+      return [];
     }
   }
 

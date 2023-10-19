@@ -15,7 +15,7 @@ final contactsProvider =
 });
 
 final contactDetailProvider =
-    StateNotifierProvider<ContactDetailNotifier, UserPublicInfo?>((ref) {
+    StateNotifierProvider<ContactDetailNotifier, UserPublicInfoModel?>((ref) {
   return ContactDetailNotifier();
 });
 

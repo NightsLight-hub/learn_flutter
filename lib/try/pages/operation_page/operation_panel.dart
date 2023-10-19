@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 import 'package:learn_flutter/try/global_state/state.dart';
+import 'package:learn_flutter/try/pages/login/common.dart';
 import 'package:learn_flutter/try/utils/Constant.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
+import 'package:learn_flutter/try/utils/store.dart';
+import 'package:learn_flutter/try/utils/utils.dart';
 
 import '../../_intern/tapable_avatar.dart';
 
@@ -43,7 +46,7 @@ class OperationPanel extends ConsumerWidget {
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: TapableAvatar(
-                      avatarUrl: 'assets/images/avatarMan.jpg',
+                      avatarUrl: Utils.getSelfFaceUrl(),
                       onTap: () {
                         logger.i("avatar tapped");
                       },
@@ -154,6 +157,6 @@ class OperationPanel extends ConsumerWidget {
 
   _logout(WidgetRef ref) {
     ref.read(appStateProvider.notifier).logout();
-    $sdk.close();
+    afterLogout();
   }
 }

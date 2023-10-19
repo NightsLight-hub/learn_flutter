@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:learn_flutter/try/api/apis.dart';
 import 'package:learn_flutter/try/pages/contact/contact_detail.dart';
 import 'package:learn_flutter/try/global_state/friend_model.dart';
@@ -21,7 +22,7 @@ class AddFriendViewState extends ConsumerState<AddFriendView> {
   late FocusNode _searchTextFieldFocusNode;
   bool _showSearchButton = false;
   bool _showUsers = false;
-  List<UserPublicInfo> findUsers = [];
+  List<UserPublicInfoModel> findUsers = [];
   Color? _searchButtonColor = Colors.blue[100];
 
   @override
@@ -74,7 +75,7 @@ class AddFriendViewState extends ConsumerState<AddFriendView> {
   }
 
   /// 用户
-  _buildUserItem(UserPublicInfo user) {
+  _buildUserItem(UserPublicInfoModel user) {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
@@ -89,7 +90,7 @@ class AddFriendViewState extends ConsumerState<AddFriendView> {
         ),
       ),
       onTap: () {
-          ref.read(contactDetailProvider.notifier).set(user);
+        ref.read(contactDetailProvider.notifier).set(user);
       },
     );
   }
@@ -120,7 +121,7 @@ class AddFriendViewState extends ConsumerState<AddFriendView> {
           )),
       onTap: () async {
         _searchTextFieldFocusNode.unfocus();
-        var users = await Apis.searchUserPublicInfo(
+        var users = await Apis.searchUserPublicInfoModel(
             content: _searchTextFieldController.text);
 
         if (users == null || users.isEmpty) {

@@ -11,7 +11,7 @@ part 'db_model.g.dart';
 class ConversationModel {
   Id? id;
 
-  @Index()
+  @Index(unique: true, replace: true)
   String? conversationID;
   int? conversationType;
   String? ownerUserId;
@@ -54,10 +54,12 @@ class MessageModel {
 
   Id? id;
 
-  @Index(unique: true, replace: true)
+  @Index()
   String? conversationID;
 
   String? clientMsgID;
+
+  @Index(unique: true, replace: true)
   String? serverMsgID;
   double? createTime;
 
@@ -79,7 +81,7 @@ class MessageModel {
   String? groupID = '';
   List<int>? content;
 
-  @Index(unique: true, replace: true)
+  @Index()
   int? seq;
 
   bool? isRead;
@@ -119,6 +121,40 @@ class MessageModel {
       'ex': ex,
       'localEx': localEx,
     };
+  }
+}
+
+@collection
+class UserPublicInfoModel {
+  Id? id;
+  @Index(unique: true, replace: true)
+  String userID = '';
+  String nickname = '';
+  String faceURL = '';
+  String account = '';
+  String email = '';
+  int level = 0;
+  int gender = 0;
+
+  // UserPublicInfoModel.fromJson(Map<String, dynamic> map)
+  //     : userID = map["userID"] ?? '',
+  //       nickname = map["nickname"] ?? '',
+  //       faceURL = map["faceURL"] ?? '',
+  //       account = map["account"] ?? '',
+  //       email = map["email"] ?? 0,
+  //       level = map["level"] ?? 1,
+  //       gender = map["gender"] ?? 0;
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['userID'] = userID;
+    data['nickname'] = nickname;
+    data['faceURL'] = faceURL;
+    data['account'] = account;
+    data['email'] = email;
+    data['level'] = level;
+    data['gender'] = gender;
+    return data;
   }
 }
 

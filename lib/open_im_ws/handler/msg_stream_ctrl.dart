@@ -19,7 +19,7 @@ class PushMessageStreamController {
     return _inst;
   }
 
-  final StreamController<Map<String, PullMsgs>> _streamController =
+  StreamController<Map<String, PullMsgs>> _streamController =
       StreamController<Map<String, PullMsgs>>();
 
   Stream<Map<String, PullMsgs>> get stream => _streamController.stream;
@@ -28,8 +28,10 @@ class PushMessageStreamController {
     _streamController.add(msg);
   }
 
-  void dispose() {
+  void reset() {
     _streamController.close();
+    // re allocate _streamController
+    _streamController = StreamController<Map<String, PullMsgs>>();
   }
 
   void run() {
@@ -61,10 +63,10 @@ class PushMessageStreamController {
     await Syncer().updateConversation(conversationId, msgModel);
     await Syncer().newMessage(conversationId, msgModel);
     // debug code
-    var contentStr = utf8.decode(msg.content);
-    var content = TextElem.fromJson(jsonDecode(contentStr));
-    logger.d(
-        '_handleTextMsg get msg conversationId $conversationId from ${msg.sendID} ${content.content}');
+    // var contentStr = utf8.decode(msg.content);
+    // var content = TextElem.fromJson(jsonDecode(contentStr));
+    // logger.d(
+    //     '_handleTextMsg get msg conversationId $conversationId from ${msg.sendID} ${content.content}');
   }
 
   _handleUserStatusChangeNotification(MsgData msg) {

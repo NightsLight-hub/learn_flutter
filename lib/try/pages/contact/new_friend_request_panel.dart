@@ -51,7 +51,7 @@ class NewFriendRequestPanelState extends ConsumerState<NewFriendRequestPanel> {
           ),
         ],
       );
-    }else {
+    } else {
       trailing = Text(request.handleResult == 1 ? '已接受' : '已拒绝');
     }
 
@@ -59,7 +59,7 @@ class NewFriendRequestPanelState extends ConsumerState<NewFriendRequestPanel> {
       contentPadding: const EdgeInsets.only(left: 100, right: 100),
       leading: CircleAvatar(
         backgroundImage: request.fromFaceURL.isEmpty
-            ? const AssetImage('assets/images/defaultAvatar.jpg')
+            ? const AssetImage('assets/images/jasmineAvatar.jpg')
                 as ImageProvider
             : NetworkImage(request.fromFaceURL),
       ),

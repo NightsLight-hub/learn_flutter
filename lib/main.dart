@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/open_im_ws/sdk_entry.dart';
 import 'package:learn_flutter/try/api/apis.dart';
 import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/event_listener/listener.dart';
@@ -37,7 +36,6 @@ class SxyAppState extends ConsumerState<SxyApp> {
   //todo  将timer任务单独做一个类
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     imSdkListener = ImSdkListener(ref: ref);
   }
@@ -121,7 +119,7 @@ class SxyAppState extends ConsumerState<SxyApp> {
 
   _startTimer() {
     _timer?.cancel();
-    // _updateFriendApplyList();
+    _updateFriendApplyList();
     _updateFriendList();
     _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       // _updateFriendApplyList();
@@ -142,6 +140,9 @@ class SxyAppState extends ConsumerState<SxyApp> {
   _updateFriendList() {
     Apis.getFriendList().then((value) {
       ref.read(contactsProvider.notifier).set(value.friendInfos);
+      if (value.friendInfos.isEmpty) {
+        return;
+      }
       var ids = value.friendInfos.map((e) => e.friendUser.userID).toList();
       Apis.subscribeOrUnSubscribeUserStatus(ids, Constants.subscribe);
     });

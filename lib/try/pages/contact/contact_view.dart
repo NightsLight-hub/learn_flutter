@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:learn_flutter/try/pages/contact/contact_detail.dart';
 import 'package:learn_flutter/try/global_state/friend_model.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
@@ -28,7 +29,7 @@ class ContactViewState extends ConsumerState<ContactView> {
   late TextEditingController _searchTextFieldController;
   late FocusNode _searchTextFieldFocusNode;
   late ContactListType _contactListType;
-  List<UserPublicInfo> _searchUserInfos = [];
+  List<UserPublicInfoModel> _searchUserInfos = [];
   bool _showNewFriendPanel = false;
 
   @override
@@ -108,7 +109,7 @@ class ContactViewState extends ConsumerState<ContactView> {
   }
 
   _searchUserPublicInfo() async {
-    var result = await Apis.searchUserPublicInfo(
+    var result = await Apis.searchUserPublicInfoModel(
         content: _searchTextFieldController.text);
     setState(() {
       if (result == null) {
@@ -154,7 +155,7 @@ class ContactViewState extends ConsumerState<ContactView> {
     }
   }
 
-  _generateUserQuery(UserPublicInfo u) {
+  _generateUserQuery(UserPublicInfoModel u) {
     return ListTile(
       leading: u.gender == 0
           ? const Icon(Icons.male_rounded)

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:learn_flutter/open_im_ws/constant.dart';
 import 'package:learn_flutter/open_im_ws/handler/helper.dart';
 import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/protocol/sdkws/sdkws.pb.dart';
+import 'package:learn_flutter/try/api/apis.dart';
 
 import '../database/dbController.dart';
 import '../database/db_model.dart';
@@ -32,11 +34,11 @@ class Syncer {
   }
 
   syncLocal() async {
-    logger.d('syncLocal start');
+    logger.t('syncLocal start');
     OpenIMSdk().invokeOnSyncStart();
     await loadLocal();
     sync().then((value) {
-      logger.d('syncLocal finished');
+      logger.t('syncLocal finished');
       OpenIMSdk().invokeOnSyncEnd(null);
     }, onError: (error) {
       logger.e('syncLocal failed', error: error);
@@ -127,10 +129,15 @@ class Syncer {
         var userId = latestMsg.sendID == OpenIMSdk().selfId
             ? latestMsg.recvID
             : latestMsg.sendID;
+        UserPublicInfoModel? userInfo = await getUserInfo(userId);
+        if (userInfo == null) {
+          throw 'updateConversation failed, userId $userId not exist';
+        }
         cv = ConversationModel()
           ..conversationID = conversationId
           ..conversationType = latestMsg.sessionType
           ..ownerUserId = OpenIMSdk().selfId
+          ..showName = userInfo.nickname
           ..userId = userId
           ..minSeq = 0
           ..maxSeq = maxSeq;
@@ -165,6 +172,10 @@ class Syncer {
       var userId = referMsg.sendID == OpenIMSdk().selfId
           ? referMsg.recvID
           : referMsg.sendID;
+      UserPublicInfoModel? userInfo = await getUserInfo(userId!);
+      if (userInfo == null) {
+        throw 'updateConversation failed, userId $userId not exist';
+      }
       var cv = ConversationModel()
         ..conversationID = conversationId
         ..conversationType = referMsg.sessionType
@@ -172,6 +183,7 @@ class Syncer {
         ..userId = userId
         ..minSeq = 0
         ..maxSeq = referMsg.seq
+        ..showName = userInfo.nickname
         ..lastMessage = utf8.encode(jsonEncode(referMsg))
         ..lastMessageTime = referMsg.sendTime!.toDouble();
       await Database().updateConversation(cv);
@@ -182,7 +194,17 @@ class Syncer {
 
   newMessage(String conversationId, MessageModel msgModel) async {
     Database().insertMessage(conversationId, msgModel);
-    OpenIMSdk().invokeOnNewMessage(conversationId, [msgModel]);
+    // todo 处理消息类型
+    if (msgModel.contentType == Constants.text) {
+      OpenIMSdk().invokeOnNewMessage(conversationId, [msgModel]);
+    } else {
+      String content = "";
+      if (msgModel.content != null) {
+        content = utf8.decode(msgModel.content!);
+      }
+      logger.w(
+          'Received new message with type ${msgModel.contentType}, content: $content');
+    }
   }
 
   _checkResp(Resp resp, String tip) {
@@ -191,5 +213,25 @@ class Syncer {
       throw resp.errMsg;
     }
     return;
+  }
+
+  Future<UserPublicInfoModel?> getUserInfo(String userId) async {
+    UserPublicInfoModel? user = await Database().getUserInfo(userId);
+    // 本地不存在user信息，从服务器获取并存储到本地
+    return user ?? await syncUserInfo(userId);
+  }
+
+  Future<UserPublicInfoModel?> syncUserInfo(String userId) async {
+    try {
+      var res = await Apis.getUserPublicInfoModel([userId]);
+      if (res.isEmpty) {
+        return null;
+      }
+      await Database().updateUserInfo(res[0]);
+      return res[0];
+    } catch (e) {
+      logger.e('syncUserInfo $userId failed', error: e);
+      rethrow;
+    }
   }
 }

@@ -49,4 +49,8 @@ class Utils {
   static String getMsgIncr() {
     return const Uuid().v4();
   }
+
+  static String getSelfFaceUrl() {
+    return Store().selfUserPublicInfo!.faceURL;
+  }
 }

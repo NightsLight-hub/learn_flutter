@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 
 import 'logger.dart';
 
@@ -16,6 +16,7 @@ class Store {
   late LoginCertificate loginCertificate;
 
   late UserInfo userInfo;
+  UserPublicInfoModel? selfUserPublicInfo;
 
   String get userID => loginCertificate.userID;
 
@@ -24,47 +25,50 @@ class Store {
   Map memData = <String, dynamic>{};
 
   // init方法必须在Store的所有其他方法使用前调用，用于初始化内部的late变量
-  Future init(LoginCertificate cert, UserInfo info) async {
+  Future init(LoginCertificate cert, String cachePath, UserInfo info) async {
     loginCertificate = cert;
     userInfo = info;
-    var add = (await getApplicationDocumentsDirectory()).path;
-    // 不同用户的hive数据库 文件放在不同目录，避免单机多实例报错
-    cachePath = p.join(add, 'learn_flutter', userID);
+    selfUserPublicInfo = await $sdk.syncUserInfo(cert.userID);
+    this.cachePath = cachePath;
     logger.i('cache path is $cachePath');
-    Hive.init(cachePath);
-    await _initState();
+    // Hive.init(this.cachePath);
+    // await _initState();
   }
 
-  _initState() async {
-    await Hive.openBox(globalBox);
-    await Hive.openBox(conversationBox!);
+  close() async {
+    // Hive.close();
   }
 
-  Box getConversationBox() {
-    return Hive.box(conversationBox);
-  }
-
-  Box _globalBox() {
-    return Hive.box(globalBox);
-  }
-
-  openBox(String name) async {
-    await Hive.openBox(name);
-  }
-
-  getBox(String name) {
-    return Hive.box(name);
-  }
-
-  saveGlobalState(String key, dynamic value) async {
-    memData[key] = value;
-    _globalBox().put(key, value);
-  }
-
-  dynamic getGlobalState(String key) async {
-    if (memData[key] == null) {
-      memData[key] = _globalBox().get(key);
-    }
-    return memData[key];
-  }
+  // _initState() async {
+  //   await Hive.openBox(globalBox);
+  //   await Hive.openBox(conversationBox!);
+  // }
+  //
+  // Box getConversationBox() {
+  //   return Hive.box(conversationBox);
+  // }
+  //
+  // Box _globalBox() {
+  //   return Hive.box(globalBox);
+  // }
+  //
+  // openBox(String name) async {
+  //   await Hive.openBox(name);
+  // }
+  //
+  // getBox(String name) {
+  //   return Hive.box(name);
+  // }
+  //
+  // saveGlobalState(String key, dynamic value) async {
+  //   memData[key] = value;
+  //   _globalBox().put(key, value);
+  // }
+  //
+  // dynamic getGlobalState(String key) async {
+  //   if (memData[key] == null) {
+  //     memData[key] = _globalBox().get(key);
+  //   }
+  //   return memData[key];
+  // }
 }

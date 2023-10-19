@@ -8,6 +8,7 @@ import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
+import 'package:learn_flutter/try/utils/store.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
 
 // SessionMessageBox 是消息展示区域
@@ -27,6 +28,7 @@ class ConversationMessageBoxState
   late TextEditingController _inputController;
   late ScrollController _scrollController;
   late FocusNode _textFocusNode;
+  String fellowAvtar = '';
   // 1816528707 is sunxy   2281402093 is jasmine
 
   // List<MessageModel> _messages = [];
@@ -37,6 +39,7 @@ class ConversationMessageBoxState
     _textFocusNode = FocusNode();
     _inputController = TextEditingController();
     _scrollController = ScrollController();
+    getFellowAvatar();
   }
 
   @override
@@ -46,6 +49,14 @@ class ConversationMessageBoxState
     _inputController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void getFellowAvatar() async {
+    // todo 如何更新user
+    UserPublicInfoModel? user = await $sdk.getUserInfo(widget.cv.userId!);
+    setState(() {
+      fellowAvtar = user!.faceURL;
+    });
   }
 
   @override
@@ -148,9 +159,7 @@ class ConversationMessageBoxState
       child: Image(
           width: 50,
           height: 50,
-          image: AssetImage(isSelf
-              ? 'assets/images/avatarMan.jpg'
-              : 'assets/images/avatarWoman.jpg')),
+          image: AssetImage(isSelf ? Utils.getSelfFaceUrl() : fellowAvtar)),
     );
     var senderName = Text.rich(TextSpan(children: [
       TextSpan(

@@ -4,6 +4,7 @@ import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 import '../utils.dart';
 
 const String indexNameConversationID = 'conversationID';
+const String indexNameUserID = "userID";
 
 class Database {
   static final Database _inst = Database._internal();
@@ -24,14 +25,25 @@ class Database {
       return;
     }
     try {
-      isar = Isar.openSync([ConversationModelSchema, MessageModelSchema],
-          directory: cachePath);
+      isar = Isar.openSync([
+        ConversationModelSchema,
+        MessageModelSchema,
+        UserPublicInfoModelSchema
+      ], directory: cachePath);
     } catch (e) {
       if (e.toString().contains('Instance has already been opened')) {
         logger.w('database reinit');
       } else {
         rethrow;
       }
+    }
+  }
+
+  close() {
+    logger.t('isar close');
+    if (inited) {
+      inited = false;
+      isar.close();
     }
   }
 
@@ -46,13 +58,8 @@ class Database {
     return isar.conversationModels.where().findAll();
   }
 
-  Future<Id> insertConversation(ConversationModel cv) async {
-    return isar.writeTxn(() async {
-      return isar.conversationModels.put(cv);
-    });
-  }
-
   Future<Id> updateConversation(ConversationModel cv) async {
+    assert(cv.showName != null);
     return isar.writeTxn(() async {
       return isar.conversationModels.putByIndex(indexNameConversationID, cv);
     });
@@ -60,8 +67,16 @@ class Database {
 
   updateConversationAndInsertMessage(
       ConversationModel cv, List<MessageModel> messages) {
+    assert(cv.showName != null);
     return isar.writeTxn(() async {
-      isar.conversationModels.putByIndex(indexNameConversationID, cv);
+      ConversationModel? cvOld = await isar.conversationModels
+          .getByIndex(indexNameConversationID, [cv.conversationID]);
+      if (cvOld == null) {
+        isar.conversationModels.put(cv);
+      } else {
+        cv.id = cvOld.id;
+        isar.conversationModels.putByIndex(indexNameConversationID, cv);
+      }
       isar.messageModels.putAll(messages);
     });
   }
@@ -83,5 +98,23 @@ class Database {
         .seqBetween(begin, end)
         .sortBySeq()
         .findAll();
+  }
+
+  /// users
+  updateUserInfo(UserPublicInfoModel user) async {
+    return isar.writeTxn(() async {
+      UserPublicInfoModel? oldUser = await isar.userPublicInfoModels
+          .getByIndex(indexNameUserID, [user.userID]);
+      if (oldUser == null) {
+        isar.userPublicInfoModels.put(user);
+      } else {
+        user.id = oldUser.id;
+        isar.userPublicInfoModels.putByIndex(indexNameUserID, user);
+      }
+    });
+  }
+
+  Future<UserPublicInfoModel?> getUserInfo(String userId) async {
+    return isar.userPublicInfoModels.getByIndexSync('userID', [userId]);
   }
 }

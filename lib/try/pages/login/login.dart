@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 import 'package:learn_flutter/try/api/apis.dart';
-import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
+import 'package:learn_flutter/try/pages/login/common.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
-import 'package:learn_flutter/try/utils/store.dart';
+
+import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -78,7 +78,7 @@ class LoginPageState extends ConsumerState<LoginPage> {
                         hintText: '输入密码',
                         labelText: '密码',
                       ),
-                      initialValue: 'sxy_1234',
+                      initialValue: '123456',
                       obscureText: true,
                       onChanged: (value) {
                         password = value;
@@ -122,18 +122,12 @@ class LoginPageState extends ConsumerState<LoginPage> {
     try {
       LoginCertificate certificate =
           await Apis.login(phoneNumber: phoneNumber, password: password);
-      var userInfo = UserInfo(certificate.userID, nickName, phoneNumber);
-      await Store().init(certificate, userInfo);
-      logger.i(
-          "login user phone $phoneNumber, nickname: $nickName, userID: ${certificate.userID}");
-      await $sdk.initSdk(Config.host, Store().cachePath, certificate, logger);
-      // todo 处理登录人信息
+      UserInfo userInfo = await afterLogin(certificate, nickName, phoneNumber);
       Future.delayed(const Duration(milliseconds: 100), () {
         ref.read(appStateProvider.notifier).login(userInfo);
-        logger.i('login successfully');
       });
-    } catch (e) {
-      logger.e('login failed, err is $e');
+    } catch (e, s) {
+      logger.e('login failed', error: e, stackTrace: s);
     }
   }
 

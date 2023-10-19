@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_flutter/try/api/apis.dart';
+import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/model.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
+import 'package:learn_flutter/try/pages/login/common.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
 import 'package:learn_flutter/try/utils/store.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
+import 'login.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -36,7 +43,6 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -76,7 +82,9 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
                         labelText: '昵称',
                       ),
                       onChanged: (value) {
-                        nickName = value;
+                        setState(() {
+                          nickName = value;
+                        });
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -170,9 +178,7 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
     try {
       LoginCertificate certificate = await Apis.register(
           phone: phoneNumber, nickName: nickName, password: password);
-      var userInfo = UserInfo(certificate.userID, nickName, phoneNumber);
-      Store().init(certificate, userInfo);
-      // todo 处理登录人信息
+      UserInfo userInfo = await afterLogin(certificate, nickName, phoneNumber);
       Future.delayed(const Duration(milliseconds: 500), () {
         ref.read(appStateProvider.notifier).login(userInfo);
       });

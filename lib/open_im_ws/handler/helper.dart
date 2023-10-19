@@ -67,3 +67,14 @@ Req createMessageReq(String clientId, String text, String recvID) {
 
   return req;
 }
+
+UserPublicInfoModel createUserInfoFromJson(Map<String, dynamic> map) {
+  return UserPublicInfoModel()
+    ..userID = map["userID"] ?? ''
+    ..nickname = map["nickname"] ?? ''
+    ..faceURL = map["faceURL"] ?? ''
+    ..account = map["account"] ?? ''
+    ..email = map["email"] ?? 0
+    ..level = map["level"] ?? 1
+    ..gender = map["gender"] ?? 0;
+}

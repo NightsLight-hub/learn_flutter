@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 
 class FriendRequest {
   String fromUserID;
@@ -66,13 +67,13 @@ class FriendApplyListResp {
     if (map['FriendRequests'] != null) {
       final list = map['FriendRequests'] as List<dynamic>;
       friendRequests = list.map((e) => FriendRequest.fromJson(e)).toList();
-      }
+    }
     total = map['total'] as int;
   }
 
   Map<String, dynamic> toJson() {
     final ret = <String, dynamic>{};
-    if (friendRequests.isNotEmpty){
+    if (friendRequests.isNotEmpty) {
       ret['data'] = {
         'FriendRequests': friendRequests.map((e) => e.toJson()).toList(),
       };
@@ -172,21 +173,21 @@ class FriendUser {
   }
 }
 
-class GetFriendListResp{
+class GetFriendListResp {
   List<FriendInfo> friendInfos = [];
   int total = 0;
 
   GetFriendListResp.fromJson(Map<String, dynamic> data) {
-    if (data['friendsInfo'] != null){
-        final list = data['friendsInfo'] as List<dynamic>;
-        friendInfos = list.map((e) => FriendInfo.fromJson(e)).toList();
-      }
-      total = data['total'] as int;
+    if (data['friendsInfo'] != null) {
+      final list = data['friendsInfo'] as List<dynamic>;
+      friendInfos = list.map((e) => FriendInfo.fromJson(e)).toList();
     }
+    total = data['total'] as int;
+  }
 
   Map<String, dynamic> toJson() {
     final ret = <String, dynamic>{};
-    if (friendInfos.isNotEmpty){
+    if (friendInfos.isNotEmpty) {
       ret['data'] = {
         'FriendRequests': friendInfos.map((e) => e.toJson()).toList(),
       };
@@ -223,50 +224,14 @@ class FriendInfoNotifier extends StateNotifier<List<FriendInfo>> {
   }
 }
 
-class ContactDetailNotifier extends StateNotifier<UserPublicInfo?> {
+class ContactDetailNotifier extends StateNotifier<UserPublicInfoModel?> {
   ContactDetailNotifier() : super(null);
 
-  void set(UserPublicInfo? userPublicInfo) {
+  void set(UserPublicInfoModel? userPublicInfo) {
     state = userPublicInfo;
   }
 
   void clear() {
     state = null;
-  }
-}
-
-class UserPublicInfo {
-  String userID;
-  String nickname;
-  String faceURL;
-  String account;
-  String email;
-  int level;
-  int gender;
-
-  UserPublicInfo.fromJson(Map<String, dynamic> map)
-      : userID = map["userID"] ?? '',
-        nickname = map["nickname"] ?? '',
-        faceURL = map["faceURL"] ?? '',
-        account = map["account"] ?? '',
-        email = map["email"] ?? 0,
-        level = map["level"] ?? 1,
-        gender = map["gender"] ?? 0;
-
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['userID'] = userID;
-    data['nickname'] = nickname;
-    data['faceURL'] = faceURL;
-    data['account'] = account;
-    data['email'] = email;
-    data['level'] = level;
-    data['gender'] = gender;
-    return data;
-  }
-
-  @override
-  String toString() {
-    return jsonEncode(this);
   }
 }

@@ -19,7 +19,9 @@ class UserInfo {
   final String id;
   final String name;
   final String phoneNumber;
-  const UserInfo(this.id, this.name, this.phoneNumber);
+  final String avatarUrl;
+  const UserInfo(this.id, this.name, this.phoneNumber,
+      {this.avatarUrl = 'assets/images/avatarMan.jpg'});
 }
 
 @immutable

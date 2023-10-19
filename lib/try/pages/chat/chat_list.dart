@@ -7,8 +7,6 @@ import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/pages/chat/chat_panel.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
 
-import '../../utils/utils.dart';
-
 class ChatList extends ConsumerStatefulWidget {
   const ChatList({super.key});
 
@@ -98,7 +96,6 @@ class ConversationListWidgetState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     sdk.getAllConversations().then((value) => setState(() {
           _conversationList = value;
@@ -120,18 +117,22 @@ class ConversationListWidgetState
 
   _generateConversationItem(ConversationModel cv) {
     if (cv.conversationType == sdk_consts.Constants.singleChatType) {
-      var fellowUserId = cv.userId;
       return ListTile(
         leading: const Icon(Icons.person),
-        title: Text(fellowUserId!),
+        title: Text(cv.showName ?? cv.userId!),
         onTap: () {
           // 选中某个会话的处理函数
           ref.read(selectedConversationProvider.notifier).set(cv);
           // 清理掉 状态管理中的消息
           ref.read(messagesProvider.notifier).clear();
           sdk.getMessages(
-              cv.conversationID!, (cv.maxSeq! - 9, cv.maxSeq!)).then((value) {
-            ref.read(messagesProvider.notifier).add(value);
+              cv.conversationID!, (cv.maxSeq! - 20, cv.maxSeq!)).then((value) {
+            // only add text message to messageProvider
+            var msgs = value
+                .where((element) =>
+                    element.contentType == sdk_consts.Constants.text)
+                .toList();
+            ref.read(messagesProvider.notifier).add(msgs);
           });
         },
         // subtitle: Text(friendInfo.friendUser.userID),

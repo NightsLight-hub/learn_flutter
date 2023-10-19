@@ -51,6 +51,7 @@ class OpenIMSdk {
   Function? onSyncStart;
   Function? onSyncEnd;
   Function? onMessageSendSucceed;
+  Function? onClose;
 
   invokeOnConnected() {
     if (onConnected != null) {
@@ -102,6 +103,12 @@ class OpenIMSdk {
     }
   }
 
+  invokeOnClose() {
+    if (onClose != null) {
+      onClose!();
+    }
+  }
+
   sendReq(Req req) {
     OpenIMSdk.instance.getChannel.sink.add(utf8.encode(jsonEncode(req)));
   }
@@ -129,7 +136,6 @@ class OpenIMSdk {
 
   // 可以参考 openim-sdk-core internal/interaction/long_conn_mgr.go
   _listenWsMsg() async {
-    logger.d('listen websocket msg');
     channel!.stream.listen((event) {
       String str = utf8.decode(event);
       sdkLogger.t('get event from ws, $str');
@@ -167,7 +173,7 @@ class OpenIMSdk {
     try {
       channel = IOWebSocketChannel.connect(uri!,
           pingInterval: const Duration(seconds: 5));
-      logger.i('wait websocket channel to be ready');
+      logger.t('wait websocket channel to be ready');
       await channel!.ready;
       logger.i('websocket channel is ready');
       await _listenWsMsg();
@@ -212,10 +218,12 @@ class OpenIMSdk {
   }
 
   close() async {
+    invokeOnClose();
     uri = null;
     _timer?.cancel();
     await channel!.sink.close();
     channel = null;
+    PushMessageStreamController().reset();
   }
 }
 
@@ -230,24 +238,24 @@ initSdk(String host, String cachePath, LoginCertificate certificate,
     OpenIMSdk().loginCertificate = certificate;
     Database().init(cachePath);
     await OpenIMSdk.instance.init(url);
-    logger.i('init sdk by url $url succeeded');
   } catch (e) {
     logger.e('init sdk by url $url failed, err is $e');
     rethrow;
   }
 }
 
-close() {
+close() async {
+  logger.t('openIM sdk close');
   OpenIMSdk().close();
+  Database().close();
 }
 
 sendTextMessage(String clientId, String text, String recvID) {
-  OpenIMSdk().sdkLogger.i('sendTextMessage, text is $text, recvID is $recvID');
+  OpenIMSdk().sdkLogger.d('sendTextMessage, text is $text, recvID is $recvID');
   Req req = helper.createMessageReq(clientId, text, recvID);
   OpenIMSdk().sendReq(req);
 }
 
-// todo test this
 Future<Resp> getNewestSeq() async {
   GetMaxSeqReq seqReq = GetMaxSeqReq(
     userID: Utils.selfID(),
@@ -294,4 +302,12 @@ Future<List<MessageModel>> getMessages(
   var (begin, end) = range;
   return Database()
       .getConversationMessageBySeqRange(conversationId, begin, end);
+}
+
+Future<UserPublicInfoModel?> getUserInfo(String userId) async {
+  return await Database().getUserInfo(userId);
+}
+
+Future<UserPublicInfoModel?> syncUserInfo(String userId) async {
+  return Syncer().syncUserInfo(userId);
 }
