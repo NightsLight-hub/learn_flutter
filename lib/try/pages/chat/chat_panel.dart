@@ -10,7 +10,8 @@ class ChatPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var selectedConversation = ref.watch(selectedConversationProvider);
+    var selectedConversation = ref
+        .watch(conversationsProvider.select((cs) => cs.selectedConversation));
     if (selectedConversation == null) {
       return Container();
     }

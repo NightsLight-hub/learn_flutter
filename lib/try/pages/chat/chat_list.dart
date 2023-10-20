@@ -92,24 +92,22 @@ class ConversationListWidget extends ConsumerStatefulWidget {
 
 class ConversationListWidgetState
     extends ConsumerState<ConversationListWidget> {
-  List<ConversationModel> _conversationList = [];
-
   @override
   void initState() {
     super.initState();
-    sdk.getAllConversations().then((value) => setState(() {
-          _conversationList = value;
-        }));
+    ref.read(conversationsProvider.notifier).sync();
   }
 
   @override
   Widget build(BuildContext context) {
+    List<ConversationModel> conversationList =
+        ref.watch(conversationsProvider.select((value) => value.conversations));
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(10),
-        itemCount: _conversationList.length,
+        itemCount: conversationList.length,
         itemBuilder: (context, index) {
-          return _generateConversationItem(_conversationList[index]);
+          return _generateConversationItem(conversationList[index]);
         },
       ),
     );
@@ -122,7 +120,7 @@ class ConversationListWidgetState
         title: Text(cv.showName ?? cv.userId!),
         onTap: () {
           // 选中某个会话的处理函数
-          ref.read(selectedConversationProvider.notifier).set(cv);
+          ref.read(conversationsProvider.notifier).setSelectedConversation(cv);
           // 清理掉 状态管理中的消息
           ref.read(messagesProvider.notifier).clear();
           sdk.getMessages(

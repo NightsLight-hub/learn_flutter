@@ -29,10 +29,13 @@ class ImSdkListener {
   }
 
   onNewMessage(String conversationID, List<MessageModel> msgs) {
-    var currentConversationId =
-        ref.read(selectedConversationProvider)?.conversationID ?? '';
-    if (currentConversationId == conversationID) {
+    if (ref.read(conversationsProvider).selectedConversation?.conversationID ==
+        conversationID) {
       ref.read(messagesProvider.notifier).add(msgs);
     }
+  }
+
+  onNewConversation(ConversationModel conversation) {
+    ref.read(conversationsProvider.notifier).addConversation([conversation]);
   }
 }

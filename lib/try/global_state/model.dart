@@ -1,9 +1,9 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as sdk;
 import 'package:uuid/uuid.dart';
 
 enum PageType {
@@ -190,15 +190,46 @@ class ApiError {
   static const _errorEN = {};
 }
 
-class SelectedConversationNotifier extends StateNotifier<ConversationModel?> {
-  SelectedConversationNotifier() : super(null);
+@immutable
+class ConversationsState {
+  final List<ConversationModel> conversations;
+  final ConversationModel? selectedConversation;
 
-  set(ConversationModel cv) {
-    state = cv;
+  const ConversationsState(this.conversations, this.selectedConversation);
+}
+
+class ConversationsNotifier extends StateNotifier<ConversationsState> {
+  ConversationsNotifier() : super(const ConversationsState([], null));
+
+  set(ConversationsState cs) {
+    state = cs;
   }
 
   get() {
     return state;
+  }
+
+  sync() {
+    sdk.getAllConversations().then((value) =>
+        state = ConversationsState(value, state.selectedConversation));
+  }
+
+  setConversations(List<ConversationModel> cvs) {
+    state = ConversationsState(cvs, state.selectedConversation);
+  }
+
+  addConversation(List<ConversationModel> cvs) {
+    var m = {
+      for (var element in state.conversations) element.conversationID!: element
+    };
+    for (var element in cvs) {
+      m[element.conversationID!] = element;
+    }
+    state = ConversationsState(m.values.toList(), state.selectedConversation);
+  }
+
+  setSelectedConversation(ConversationModel cv) {
+    state = ConversationsState(state.conversations, cv);
   }
 }
 

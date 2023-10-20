@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:isar/isar.dart';
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
 
@@ -19,12 +21,13 @@ class Database {
 
   bool inited = false;
 
-  init(String cachePath) {
+  init(String cachePath) async {
     if (inited) {
       logger.w('database reinit');
       return;
     }
     try {
+      await Directory(cachePath).create(recursive: true);
       isar = Isar.openSync([
         ConversationModelSchema,
         MessageModelSchema,

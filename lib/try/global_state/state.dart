@@ -25,10 +25,9 @@ final friendApplyProvider =
   return FriendApplyListRespNotifier();
 });
 
-final selectedConversationProvider =
-    StateNotifierProvider<SelectedConversationNotifier, ConversationModel?>(
-        (ref) {
-  return SelectedConversationNotifier();
+final conversationsProvider =
+    StateNotifierProvider<ConversationsNotifier, ConversationsState>((ref) {
+  return ConversationsNotifier();
 });
 
 final messagesProvider =

@@ -1,221 +1,66 @@
 #0   init (package:learn_flutter/main.dart:157:10)
-17:51:08.722 (+0:00:00.007988)
 learn_flutter start o(*￣▽￣*)ブ
 #0   ImSdkListener.registerToOpenIMSdk (package:learn_flutter/try/event_listener/listener.dart:16:12)
-17:51:08.771 (+0:00:00.056946)
 register openIMSdk listener
-#0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:176:14)
-17:52:50.200 (+0:01:41.486118)
-wait websocket channel to be ready
-#0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:241:12)
-17:52:50.201 (+0:01:41.487119)
-init sdk by url ws://172.31.237.211:10001?sendID=9042686413&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiI5MDQyNjg2NDEzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NDg1MTcwLCJuYmYiOjE2OTc3MDg4NzAsImlhdCI6MTY5NzcwOTE3MH0.JfVoifBaWKLS0qAEDf1yuchKJKFJ699esQ6ue9Z3jcw&platformID=3&operationID=0daeb47c-08a5-4665-b3f2-ff4034a99f10 succeeded
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:242:12)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ init sdk by url ws://172.31.237.211:10001?sendID=2476616293&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIyNDc2NjE2MjkzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NTYyMTMxLCJuYmYiOjE2OTc3ODU4MzEsImlhdCI6MTY5Nzc4NjEzMX0.Fo8IKHMbMshAJn1w-MCYUU5u4HWZYKot6NW2O78OTyQ&platformID=3&operationID=b9571e7e-16cb-4495-ad44-f3e7b601393e failed, err is IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
+│ 
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
+│ 
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+#0   HttpUtil.post (package:learn_flutter/try/utils/http_utils.dart:84:16)
+: 20003 PhoneAlreadyRegister
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ PhoneAlreadyRegister
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ register failed
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ PhoneAlreadyRegister
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:242:12)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ init sdk by url ws://172.31.237.211:10001?sendID=3104131053&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIzMTA0MTMxMDUzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NTYyMjIyLCJuYmYiOjE2OTc3ODU5MjIsImlhdCI6MTY5Nzc4NjIyMn0.lkHkVqPmRJX5uEqq1IfMKGt5rf8QjGxSRMy5N9KCdeY&platformID=3&operationID=7cc0cda9-17cc-4774-889c-fce1c9954b50 failed, err is IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
+│ 
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
+│ 
+└───────────────────────────────────────────────────────────────────────────────────────────────────
 #0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:178:14)
-17:52:50.227 (+0:01:41.513394)
 websocket channel is ready
 #0   ImSdkListener.onSyncStart (package:learn_flutter/try/event_listener/listener.dart:23:12)
-17:52:50.229 (+0:01:41.515348)
 同步开始
-#0   Apis.getUserPublicInfoModel (package:learn_flutter/try/api/apis.dart:233:14)
-17:52:50.270 (+0:01:41.555927)
-{
-  "users": [
-    {
-      "userID": "9042686413",
-      "account": "15642550210",
-      "email": "",
-      "nickname": "Sunxy",
-      "faceURL": "assets/images/sunxyAvatar.jpg",
-      "gender": 1,
-      "level": 1
-    }
-  ]
-}
 #0   Store.init (package:learn_flutter/try/utils/store.dart:33:12)
-17:52:50.309 (+0:01:41.595537)
-cache path is C:\Users\sunxy\Documents\learn_flutter\9042686413
+cache path is C:\Users\sunxy\Documents\learn_flutter\6184705824
 #0   afterLogin (package:learn_flutter/try/pages/login/common.dart:18:10)
-17:52:50.309 (+0:01:41.595537)
-login user phone 15642550210, nickname: , userID: 9042686413
+login user phone 15144199264, nickname: jasmine4, userID: 6184705824
 #0   ImSdkListener.onSyncEnd (package:learn_flutter/try/event_listener/listener.dart:28:12)
-17:52:50.328 (+0:01:41.614726)
 同步成功
-#0   LoginPageState.loginHandler.<anonymous closure> (package:learn_flutter/try/pages/login/login.dart:128:16)
-17:52:50.423 (+0:01:41.709555)
-login successfully
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:53:11.068 (+0:02:02.354088)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:255:25)
-17:53:15.176 (+0:02:06.462590)
-sendTextMessage, text is hehe, recvID is 1414360329
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   PushMessageStreamController._handleTextMsg (package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart:68:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:53:15.324 (+0:02:06.610298)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ _handleTextMsg get msg conversationId si_1414360329_9042686413 from 9042686413 hehe
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:255:25)
-17:53:54.788 (+0:02:46.074758)
-sendTextMessage, text is sjfdakldjaskfl jsa, recvID is 1414360329
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   PushMessageStreamController._handleTextMsg (package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart:68:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:53:54.818 (+0:02:46.104568)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ _handleTextMsg get msg conversationId si_1414360329_9042686413 from 9042686413 sjfdakldjaskfl jsa
-└───────────────────────────────────────────────────────────────────────────────────────────────────
+#0   OperationPanel.build.<anonymous closure> (package:learn_flutter/try/pages/operation_page/operation_panel.dart:51:32)
+avatar tapped
 #0   OpenIMSdk._listenWsMsg.<anonymous closure> (package:learn_flutter/open_im_ws/sdk_entry.dart:166:17)
-17:53:58.160 (+0:02:49.446063)
 ws channel close [null] null
-#0   Database.init (package:learn_flutter/open_im_ws/database/dbController.dart:35:16)
-17:53:59.306 (+0:02:50.591882)
+#0   Database.init (package:learn_flutter/open_im_ws/database/dbController.dart:38:16)
 database reinit
-#0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:176:14)
-17:53:59.306 (+0:02:50.591882)
-wait websocket channel to be ready
-#0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:241:12)
-17:53:59.306 (+0:02:50.591882)
-init sdk by url ws://172.31.237.211:10001?sendID=9042686413&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiI5MDQyNjg2NDEzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NDg1MjM5LCJuYmYiOjE2OTc3MDg5MzksImlhdCI6MTY5NzcwOTIzOX0.hwMsjDV44OuNLqI80Q4-Wv3SKi0XF02JkxK0Cy2_kHQ&platformID=3&operationID=f8b62b06-59be-494e-bb93-d7a47deadb7d succeeded
 #0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:178:14)
-17:53:59.312 (+0:02:50.598398)
 websocket channel is ready
 #0   ImSdkListener.onSyncStart (package:learn_flutter/try/event_listener/listener.dart:23:12)
-17:53:59.313 (+0:02:50.599398)
 同步开始
-#0   ImSdkListener.onSyncEnd (package:learn_flutter/try/event_listener/listener.dart:28:12)
-17:53:59.319 (+0:02:50.605400)
-同步成功
-#0   Apis.getUserPublicInfoModel (package:learn_flutter/try/api/apis.dart:233:14)
-17:53:59.320 (+0:02:50.606398)
-{
-  "users": [
-    {
-      "userID": "9042686413",
-      "account": "15642550210",
-      "email": "",
-      "nickname": "Sunxy",
-      "faceURL": "assets/images/sunxyAvatar.jpg",
-      "gender": 1,
-      "level": 1
-    }
-  ]
-}
 #0   Store.init (package:learn_flutter/try/utils/store.dart:33:12)
-17:53:59.323 (+0:02:50.609397)
 cache path is C:\Users\sunxy\Documents\learn_flutter\9042686413
 #0   afterLogin (package:learn_flutter/try/pages/login/common.dart:18:10)
-17:53:59.324 (+0:02:50.610399)
 login user phone 15642550210, nickname: , userID: 9042686413
-#0   LoginPageState.loginHandler.<anonymous closure> (package:learn_flutter/try/pages/login/login.dart:128:16)
-17:53:59.425 (+0:02:50.711742)
-login successfully
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:53:59.443 (+0:02:50.729283)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:255:25)
-17:54:21.757 (+0:03:13.043208)
-sendTextMessage, text is hkjhklj;k, recvID is 1414360329
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   PushMessageStreamController._handleTextMsg (package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart:68:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:54:21.818 (+0:03:13.104771)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ _handleTextMsg get msg conversationId si_1414360329_9042686413 from 9042686413 hkjhklj;k
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:54:59.878 (+0:03:51.164656)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:55:02.936 (+0:03:54.222267)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:55:33.290 (+0:04:24.575928)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:55:53.541 (+0:04:44.827407)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:55:54.990 (+0:04:46.276629)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:56:22.688 (+0:05:13.974261)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:254:25)
-17:57:47.291 (+0:06:38.577324)
-sendTextMessage, text is afds, recvID is 1414360329
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   PushMessageStreamController._handleTextMsg (package:learn_flutter/open_im_ws/handler/msg_stream_ctrl.dart:68:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:57:47.324 (+0:06:38.610733)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ _handleTextMsg get msg conversationId si_1414360329_9042686413 from 9042686413 afds
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:58:14.919 (+0:07:06.205189)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   ChatPanel.build (package:learn_flutter/try/pages/chat/chat_panel.dart:17:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:58:18.336 (+0:07:09.622424)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ build chatPanel conversationId is si_1414360329_9042686413
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:254:25)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:58:25.548 (+0:07:16.834210)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ sendTextMessage, text is jfsdalfj, recvID is 1414360329
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:254:25)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:58:27.018 (+0:07:18.304559)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ sendTextMessage, text is kasjdfkljsda, recvID is 1414360329
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   sendTextMessage (package:learn_flutter/open_im_ws/sdk_entry.dart:254:25)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ 17:58:27.794 (+0:07:19.080365)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ sendTextMessage, text is sadjfksjda, recvID is 1414360329
-└───────────────────────────────────────────────────────────────────────────────────────────────────
+#0   ImSdkListener.onSyncEnd (package:learn_flutter/try/event_listener/listener.dart:28:12)
+同步成功

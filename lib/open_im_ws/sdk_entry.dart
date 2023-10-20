@@ -236,7 +236,7 @@ initSdk(String host, String cachePath, LoginCertificate certificate,
   try {
     OpenIMSdk().sdkLogger = logger;
     OpenIMSdk().loginCertificate = certificate;
-    Database().init(cachePath);
+    await Database().init(cachePath);
     await OpenIMSdk.instance.init(url);
   } catch (e) {
     logger.e('init sdk by url $url failed, err is $e');

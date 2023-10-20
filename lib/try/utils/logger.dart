@@ -11,13 +11,13 @@ Logger _logger = Logger(
     colors: false,
     lineLength: 100,
     printEmojis: false,
-    printTime: true,
+    // printTime: true,
     excludeBox: {
       Level.info: true,
       Level.warning: true,
     },
   ),
-  level: Level.debug,
+  level: Level.info,
   output: MultiOutput([
     ConsoleOutput(),
     MyFileOutput(

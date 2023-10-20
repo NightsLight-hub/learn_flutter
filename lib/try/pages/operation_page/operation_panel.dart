@@ -97,6 +97,7 @@ class OperationPanel extends ConsumerWidget {
             Container(
                 margin: const EdgeInsets.only(bottom: 40),
                 child: PopupMenuButton<OperationMenu>(
+                  tooltip: '设置及其他',
                   icon: const Icon(
                     Icons.menu,
                     size: 45,
