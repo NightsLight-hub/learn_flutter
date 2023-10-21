@@ -6,27 +6,27 @@ import 'model.dart';
 
 // final messagesProvider = StateNotifierProvider((ref) => null)<Messages>((ref) => Messages());
 
-final appStateProvider = StateNotifierProvider<AppStateNotifier, AppState>(
-    (ref) => AppStateNotifier());
+final appStateProvider =
+    StateNotifierProvider.autoDispose<AppStateNotifier, AppState>(
+        (ref) => AppStateNotifier());
 
 final contactsProvider =
     StateNotifierProvider<FriendInfoNotifier, List<FriendInfo>>((ref) {
   return FriendInfoNotifier();
 });
 
-final contactDetailProvider =
-    StateNotifierProvider<ContactDetailNotifier, UserPublicInfoModel?>((ref) {
+final contactDetailProvider = StateNotifierProvider.autoDispose<
+    ContactDetailNotifier, UserPublicInfoModel?>((ref) {
   return ContactDetailNotifier();
 });
 
-final friendApplyProvider =
-    StateNotifierProvider<FriendApplyListRespNotifier, FriendApplyListResp?>(
-        (ref) {
+final friendApplyProvider = StateNotifierProvider.autoDispose<
+    FriendApplyListRespNotifier, FriendApplyListResp?>((ref) {
   return FriendApplyListRespNotifier();
 });
 
-final conversationsProvider =
-    StateNotifierProvider<ConversationsNotifier, ConversationsState>((ref) {
+final conversationsProvider = StateNotifierProvider.autoDispose<
+    ConversationsNotifier, ConversationsState>((ref) {
   return ConversationsNotifier();
 });
 

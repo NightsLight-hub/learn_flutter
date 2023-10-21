@@ -33,6 +33,7 @@ class Database {
         MessageModelSchema,
         UserPublicInfoModelSchema
       ], directory: cachePath);
+      inited = true;
     } catch (e) {
       if (e.toString().contains('Instance has already been opened')) {
         logger.w('database reinit');
@@ -43,8 +44,8 @@ class Database {
   }
 
   close() {
-    logger.t('isar close');
     if (inited) {
+      logger.i('isar close');
       inited = false;
       isar.close();
     }
@@ -65,6 +66,13 @@ class Database {
     assert(cv.showName != null);
     return isar.writeTxn(() async {
       return isar.conversationModels.putByIndex(indexNameConversationID, cv);
+    });
+  }
+
+  deleteConversation(String conversationId) async {
+    return isar.writeTxn(() async {
+      return isar.conversationModels
+          .deleteByIndex(indexNameConversationID, [conversationId]);
     });
   }
 
@@ -99,7 +107,7 @@ class Database {
         .conversationIDEqualTo(conversationId)
         .and()
         .seqBetween(begin, end)
-        .sortBySeq()
+        .sortBySendTime()
         .findAll();
   }
 

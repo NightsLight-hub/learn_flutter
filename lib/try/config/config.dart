@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 class Config {
-  static String host = "172.31.237.211";
+  static String host = "172.31.85.25";
   static int defaultMessageShowNumber = 50;
   //初始化全局信息
   static Future init() async {

@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:isar/isar.dart';
-import 'package:learn_flutter/try/utils/store.dart';
-
 import '../constant.dart';
 import '../utils.dart' as utils;
 part 'db_model.g.dart';
@@ -31,6 +29,7 @@ class MessageModel {
   MessageModel.text(
     String text, {
     required this.recvID,
+    required this.senderNickname,
     this.serverMsgID = '',
     this.sessionType = Constants.singleChatType,
     this.seq = 0,
@@ -43,7 +42,6 @@ class MessageModel {
     isRead = false;
     status = Constants.msgStatusSending;
     sendID = utils.selfID();
-    senderNickname = Store().userInfo.name;
     senderFaceURL = '';
     clientMsgID = utils.uuid();
     msgFrom = Constants.Typing;

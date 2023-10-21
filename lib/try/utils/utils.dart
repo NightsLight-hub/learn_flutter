@@ -34,6 +34,10 @@ class Utils {
     return Store().userID;
   }
 
+  static String selfNickName() {
+    return Store().nickName;
+  }
+
   static String operationID() {
     return const Uuid().v1();
   }

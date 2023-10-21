@@ -14,8 +14,8 @@ class ImSdkListener {
 
   registerToOpenIMSdk() {
     logger.i('register openIMSdk listener');
-    OpenIMSdk().onSyncStart = onSyncStart;
-    OpenIMSdk().onSyncEnd = onSyncEnd;
+    // OpenIMSdk().onSyncStart = onSyncStart;
+    // OpenIMSdk().onSyncEnd = onSyncEnd;
     OpenIMSdk().onNewMessage = onNewMessage;
   }
 

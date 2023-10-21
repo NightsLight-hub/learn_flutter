@@ -332,14 +332,12 @@ class MessagesNotifier extends StateNotifier<List<MessageModel>> {
       m[msg.seq!] = msg;
     }
     msgs = m.values.toList();
-    msgs.sort((a, b) => a.seq!.compareTo(b.seq!));
-    state = [
-      ...msgs,
-    ];
+    msgs.sort((a, b) => a.sendTime!.compareTo(b.sendTime!));
+    state = msgs;
   }
 
   void clearAndAdd(List<MessageModel> msgs) {
-    msgs.sort((a, b) => a.seq!.compareTo(b.seq!));
+    msgs.sort((a, b) => a.sendTime!.compareTo(b.sendTime!));
     state = [
       ...msgs,
     ];

@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
-import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as sdk;
 import 'package:learn_flutter/open_im_ws/utils.dart';
 import 'package:learn_flutter/try/config/config.dart';
 import 'package:learn_flutter/try/global_state/state.dart';
-import 'package:learn_flutter/try/utils/store.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
 
 // SessionMessageBox 是消息展示区域
 class ConversationMessageBox extends ConsumerStatefulWidget {
   final ConversationModel cv;
+  final String? fellowAvtar;
 
-  const ConversationMessageBox({required this.cv, super.key});
+  const ConversationMessageBox(
+      {required this.cv, required this.fellowAvtar, super.key});
 
   @override
   ConsumerState<ConversationMessageBox> createState() {
@@ -28,7 +29,7 @@ class ConversationMessageBoxState
   late TextEditingController _inputController;
   late ScrollController _scrollController;
   late FocusNode _textFocusNode;
-  String fellowAvtar = '';
+  bool conversationChanged = false;
   // 1816528707 is sunxy   2281402093 is jasmine
 
   // List<MessageModel> _messages = [];
@@ -39,7 +40,6 @@ class ConversationMessageBoxState
     _textFocusNode = FocusNode();
     _inputController = TextEditingController();
     _scrollController = ScrollController();
-    getFellowAvatar();
   }
 
   @override
@@ -51,32 +51,24 @@ class ConversationMessageBoxState
     super.dispose();
   }
 
-  void getFellowAvatar() async {
-    // todo 如何更新user
-    UserPublicInfoModel? user = await $sdk.getUserInfo(widget.cv.userId!);
-    setState(() {
-      fellowAvtar = user!.faceURL;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    var messages = ref.watch(messagesProvider);
+    List<MessageModel> renderMessages = messages.length >
+            Config.defaultMessageShowNumber
+        ? messages.sublist(messages.length - Config.defaultMessageShowNumber)
+        : messages;
     return Expanded(
       child: Column(
         children: [
-          _buildMessageShowWidget(),
+          _buildMessageShowWidget(renderMessages),
           _buildMessageInputRow(),
         ],
       ),
     );
   }
 
-  Widget _buildMessageShowWidget() {
-    var messages = ref.watch(messagesProvider);
-    List<MessageModel> renderMessages = messages.length >
-            Config.defaultMessageShowNumber
-        ? messages.sublist(messages.length - Config.defaultMessageShowNumber)
-        : messages;
+  Widget _buildMessageShowWidget(List<MessageModel> renderMessages) {
     _scrollToBottom();
     return Expanded(
         child: ListView.builder(
@@ -125,7 +117,8 @@ class ConversationMessageBoxState
       return;
     }
     try {
-      $sdk.sendTextMessage(Utils.uuid(), msg, widget.cv.userId!);
+      sdk.sendTextMessage(
+          Utils.uuid(), msg, widget.cv.userId!, Utils.selfNickName());
     } catch (e, s) {
       logger.e('sendTextMessage failed', error: e, stackTrace: s);
     } finally {
@@ -153,6 +146,7 @@ class ConversationMessageBoxState
   /// if isSelf is true, the message will be rendered on the right side,
   /// otherwise on the left side
   Row _renderText(String name, String content, {bool isSelf = false}) {
+    String fellowAvtar = widget.fellowAvtar ?? 'assets/images/avatarMan.jpg';
     var align = isSelf ? MainAxisAlignment.end : MainAxisAlignment.start;
     var senderAvatar = Container(
       margin: const EdgeInsets.all(10),

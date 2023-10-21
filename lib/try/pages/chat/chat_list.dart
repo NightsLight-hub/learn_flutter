@@ -119,23 +119,27 @@ class ConversationListWidgetState
         leading: const Icon(Icons.person),
         title: Text(cv.showName ?? cv.userId!),
         onTap: () {
-          // 选中某个会话的处理函数
-          ref.read(conversationsProvider.notifier).setSelectedConversation(cv);
-          // 清理掉 状态管理中的消息
-          ref.read(messagesProvider.notifier).clear();
-          sdk.getMessages(
-              cv.conversationID!, (cv.maxSeq! - 20, cv.maxSeq!)).then((value) {
-            // only add text message to messageProvider
-            var msgs = value
-                .where((element) =>
-                    element.contentType == sdk_consts.Constants.text)
-                .toList();
-            ref.read(messagesProvider.notifier).add(msgs);
-          });
+          _selectConversation(cv);
         },
         // subtitle: Text(friendInfo.friendUser.userID),
         // trailing: const Icon(Icons.arrow_forward_ios),
       );
+    }
+  }
+
+  _selectConversation(ConversationModel cv) async {
+    var oldCv = ref.read(conversationsProvider).selectedConversation;
+    if (oldCv != cv) {
+      ref.read(messagesProvider.notifier).clear();
+      List<MessageModel> msgs =
+          await sdk.getLatestMessages(cv.conversationID!, 20);
+      // only add text message to messageProvider
+      msgs = msgs
+          .where((element) => element.contentType == sdk_consts.Constants.text)
+          .toList();
+      logger.d('add ${msgs.length} messages to messageProvider');
+      ref.read(messagesProvider.notifier).add(msgs);
+      ref.read(conversationsProvider.notifier).setSelectedConversation(cv);
     }
   }
 }

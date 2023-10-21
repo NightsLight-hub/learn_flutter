@@ -31,6 +31,6 @@ void main() {
   });
 
   test('sendMessage', () async {
-    sendTextMessage(Utils.uuid(), 'test message', '2281402093');
+    sendTextMessage(Utils.uuid(), 'test message', '2281402093', '15642550210');
   });
 }

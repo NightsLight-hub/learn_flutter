@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fixnum/fixnum.dart' as fix;
 import 'package:learn_flutter/open_im_ws/database/db_model.dart';
+import 'package:learn_flutter/open_im_ws/sdk_entry.dart';
 import 'package:learn_flutter/protocol/sdkws/sdkws.pb.dart';
 import 'package:learn_flutter/try/utils/store.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
@@ -34,17 +35,18 @@ MessageModel convertToMessage(String conversationId, MsgData msg) {
   return message;
 }
 
-Req createMessageReq(String clientId, String text, String recvID) {
+Req createMessageReq(
+    String clientId, String text, String recvID, String senderName) {
   var textElem = TextElem(content: text);
   var timestamp = fix.Int64(Utils.getCurrentTimestampByMill());
   MsgData data = MsgData(
-    sendID: Store().loginCertificate.userID,
+    sendID: OpenIMSdk().selfId,
     recvID: recvID,
     groupID: '',
     clientMsgID: clientId,
     serverMsgID: '',
     senderPlatformID: Utils.platformWindows,
-    senderNickname: Store().userInfo.name,
+    senderNickname: senderName,
     senderFaceURL: '',
     sessionType: Constants.singleChatType,
     msgFrom: Constants.userMsgType,
@@ -59,8 +61,8 @@ Req createMessageReq(String clientId, String text, String recvID) {
   );
   Req req = Req(
     reqIdentifier: ReqSeqNumber.wSSendMsg,
-    token: Store().loginCertificate.imToken,
-    sendID: Store().loginCertificate.userID,
+    token: OpenIMSdk().imToken,
+    sendID: OpenIMSdk().selfId,
     msgIncr: Utils.getMsgIncr(),
     data: data.writeToBuffer(),
   );

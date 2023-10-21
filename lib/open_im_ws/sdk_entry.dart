@@ -29,7 +29,9 @@ class OpenIMSdk {
 
   static OpenIMSdk get instance => _instance;
 
-  String get selfId => loginCertificate!.userID;
+  String get selfId => loginCertificate.userID;
+
+  String get imToken => loginCertificate.imToken;
   IOWebSocketChannel? channel;
 
   IOWebSocketChannel get getChannel => channel!;
@@ -250,16 +252,16 @@ close() async {
   Database().close();
 }
 
-sendTextMessage(String clientId, String text, String recvID) {
+sendTextMessage(
+    String clientId, String text, String recvID, String senderNickName) {
   OpenIMSdk().sdkLogger.d('sendTextMessage, text is $text, recvID is $recvID');
-  Req req = helper.createMessageReq(clientId, text, recvID);
+  Req req = helper.createMessageReq(clientId, text, recvID, senderNickName);
   OpenIMSdk().sendReq(req);
 }
 
 Future<Resp> getNewestSeq() async {
-  GetMaxSeqReq seqReq = GetMaxSeqReq(
-    userID: Utils.selfID(),
-  );
+  GetMaxSeqReq seqReq =
+      GetMaxSeqReq(userID: OpenIMSdk().loginCertificate.userID);
   Req req = Req(
     reqIdentifier: ReqSeqNumber.wSGetNewestSeq,
     token: OpenIMSdk().loginCertificate!.imToken,
@@ -304,10 +306,19 @@ Future<List<MessageModel>> getMessages(
       .getConversationMessageBySeqRange(conversationId, begin, end);
 }
 
+Future<List<MessageModel>> getLatestMessages(String conversationId, int num) {
+  var (begin, end) = (
+    Syncer().syncedConversationMaxSeq[conversationId]! - num,
+    Syncer().syncedConversationMaxSeq[conversationId]!
+  );
+  return Database()
+      .getConversationMessageBySeqRange(conversationId, begin, end);
+}
+
 Future<UserPublicInfoModel?> getUserInfo(String userId) async {
   return await Database().getUserInfo(userId);
 }
 
 Future<UserPublicInfoModel?> syncUserInfo(String userId) async {
-  return Syncer().syncUserInfo(userId);
+  return await Syncer().syncUserInfo(userId);
 }

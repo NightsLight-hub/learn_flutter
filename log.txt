@@ -2,65 +2,9 @@
 learn_flutter start o(*￣▽￣*)ブ
 #0   ImSdkListener.registerToOpenIMSdk (package:learn_flutter/try/event_listener/listener.dart:16:12)
 register openIMSdk listener
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:242:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ init sdk by url ws://172.31.237.211:10001?sendID=2476616293&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIyNDc2NjE2MjkzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NTYyMTMxLCJuYmYiOjE2OTc3ODU4MzEsImlhdCI6MTY5Nzc4NjEzMX0.Fo8IKHMbMshAJn1w-MCYUU5u4HWZYKot6NW2O78OTyQ&platformID=3&operationID=b9571e7e-16cb-4495-ad44-f3e7b601393e failed, err is IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
-│ 
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
-│ 
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   HttpUtil.post (package:learn_flutter/try/utils/http_utils.dart:84:16)
-: 20003 PhoneAlreadyRegister
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ PhoneAlreadyRegister
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ register failed
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ PhoneAlreadyRegister
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   initSdk (package:learn_flutter/open_im_ws/sdk_entry.dart:242:12)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ init sdk by url ws://172.31.237.211:10001?sendID=3104131053&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIzMTA0MTMxMDUzIiwiUGxhdGZvcm1JRCI6MywiZXhwIjoxNzA1NTYyMjIyLCJuYmYiOjE2OTc3ODU5MjIsImlhdCI6MTY5Nzc4NjIyMn0.lkHkVqPmRJX5uEqq1IfMKGt5rf8QjGxSRMy5N9KCdeY&platformID=3&operationID=7cc0cda9-17cc-4774-889c-fce1c9954b50 failed, err is IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
-│ 
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-│ #0   RegisterPageState.registerUser (package:learn_flutter/try/pages/login/register_page.dart:186:14)
-├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
-│ IsarError: Cannot open Environment: MdbxError (3): The system cannot find the path specified.
-│ 
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-#0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:178:14)
+#0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:180:14)
 websocket channel is ready
-#0   ImSdkListener.onSyncStart (package:learn_flutter/try/event_listener/listener.dart:23:12)
-同步开始
-#0   Store.init (package:learn_flutter/try/utils/store.dart:33:12)
-cache path is C:\Users\sunxy\Documents\learn_flutter\6184705824
-#0   afterLogin (package:learn_flutter/try/pages/login/common.dart:18:10)
-login user phone 15144199264, nickname: jasmine4, userID: 6184705824
-#0   ImSdkListener.onSyncEnd (package:learn_flutter/try/event_listener/listener.dart:28:12)
-同步成功
-#0   OperationPanel.build.<anonymous closure> (package:learn_flutter/try/pages/operation_page/operation_panel.dart:51:32)
-avatar tapped
-#0   OpenIMSdk._listenWsMsg.<anonymous closure> (package:learn_flutter/open_im_ws/sdk_entry.dart:166:17)
-ws channel close [null] null
-#0   Database.init (package:learn_flutter/open_im_ws/database/dbController.dart:38:16)
-database reinit
-#0   OpenIMSdk._reConn (package:learn_flutter/open_im_ws/sdk_entry.dart:178:14)
-websocket channel is ready
-#0   ImSdkListener.onSyncStart (package:learn_flutter/try/event_listener/listener.dart:23:12)
-同步开始
-#0   Store.init (package:learn_flutter/try/utils/store.dart:33:12)
+#0   Store.init (package:learn_flutter/try/utils/store.dart:37:12)
 cache path is C:\Users\sunxy\Documents\learn_flutter\9042686413
-#0   afterLogin (package:learn_flutter/try/pages/login/common.dart:18:10)
-login user phone 15642550210, nickname: , userID: 9042686413
-#0   ImSdkListener.onSyncEnd (package:learn_flutter/try/event_listener/listener.dart:28:12)
-同步成功
+#0   afterLogin (package:learn_flutter/try/pages/login/common.dart:17:10)
+login user phone 15642550210, nickname: Sunxy, userID: 9042686413

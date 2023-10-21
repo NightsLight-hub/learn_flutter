@@ -26,7 +26,7 @@ class Syncer {
   bool _syncing = false;
   Map<String, int> syncedConversationMaxSeq = {};
 
-  loadLocal() async {
+  _loadLocal() async {
     var cvs = await Database().getAllConversations();
     for (ConversationModel cv in cvs) {
       syncedConversationMaxSeq[cv.conversationID!] = cv.maxSeq!;
@@ -36,7 +36,7 @@ class Syncer {
   syncLocal() async {
     logger.t('syncLocal start');
     OpenIMSdk().invokeOnSyncStart();
-    await loadLocal();
+    await _loadLocal();
     sync().then((value) {
       logger.t('syncLocal finished');
       OpenIMSdk().invokeOnSyncEnd(null);
@@ -58,11 +58,19 @@ class Syncer {
       _checkResp(resp, 'syncConversation failed');
       List<int> buffer = base64Decode(resp.data);
       GetMaxSeqResp getMaxSeqResp = GetMaxSeqResp.fromBuffer(buffer);
+      for (String conversationId in syncedConversationMaxSeq.keys) {
+        if (getMaxSeqResp.maxSeqs[conversationId] == null) {
+          // 服务端不存在此会话，删除本地记录
+          await Database().deleteConversation(conversationId);
+          syncedConversationMaxSeq.remove(conversationId);
+        }
+      }
       for (String conversationId in getMaxSeqResp.maxSeqs.keys) {
         var syncedMaxSeq = syncedConversationMaxSeq[conversationId];
         var serverMaxSeq = getMaxSeqResp.maxSeqs[conversationId]!.toInt();
         // debugger();
         if (syncedMaxSeq != null && syncedMaxSeq >= serverMaxSeq) {
+          // 本地会话同步到的最大消息与服务端一致，说明没有此会话没有新消息到达
           continue;
         }
         int syncedMinSeq = syncedMaxSeq == null

@@ -178,7 +178,7 @@ class RegisterPageState extends ConsumerState<RegisterPage> {
     try {
       LoginCertificate certificate = await Apis.register(
           phone: phoneNumber, nickName: nickName, password: password);
-      UserInfo userInfo = await afterLogin(certificate, nickName, phoneNumber);
+      UserInfo userInfo = await afterLogin(certificate, phoneNumber);
       Future.delayed(const Duration(milliseconds: 500), () {
         ref.read(appStateProvider.notifier).login(userInfo);
       });

@@ -27,6 +27,7 @@ void main() {
     sleep(const Duration(seconds: 100));
   });
   test('sendMessage', () async {
-    $sdk.sendTextMessage(Utils.uuid(), 'test message', '2281402093');
+    $sdk.sendTextMessage(
+        Utils.uuid(), 'test message', '2281402093', '15642550210');
   });
 }

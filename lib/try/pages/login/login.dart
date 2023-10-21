@@ -122,7 +122,7 @@ class LoginPageState extends ConsumerState<LoginPage> {
     try {
       LoginCertificate certificate =
           await Apis.login(phoneNumber: phoneNumber, password: password);
-      UserInfo userInfo = await afterLogin(certificate, nickName, phoneNumber);
+      UserInfo userInfo = await afterLogin(certificate, phoneNumber);
       Future.delayed(const Duration(milliseconds: 100), () {
         ref.read(appStateProvider.notifier).login(userInfo);
       });

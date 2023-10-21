@@ -19,16 +19,20 @@ class Store {
   UserPublicInfoModel? selfUserPublicInfo;
 
   String get userID => loginCertificate.userID;
+  String get nickName => selfUserPublicInfo!.nickname;
 
   late String cachePath;
 
   Map memData = <String, dynamic>{};
 
   // init方法必须在Store的所有其他方法使用前调用，用于初始化内部的late变量
-  Future init(LoginCertificate cert, String cachePath, UserInfo info) async {
+  Future init(
+      LoginCertificate cert, String cachePath, String phoneNumber) async {
     loginCertificate = cert;
-    userInfo = info;
+    this.cachePath = cachePath;
     selfUserPublicInfo = await $sdk.syncUserInfo(cert.userID);
+    userInfo = UserInfo(cert.userID, selfUserPublicInfo!.nickname, phoneNumber);
+    loginCertificate = cert;
     this.cachePath = cachePath;
     logger.i('cache path is $cachePath');
     // Hive.init(this.cachePath);
