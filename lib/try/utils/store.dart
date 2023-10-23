@@ -19,7 +19,8 @@ class Store {
   UserPublicInfoModel? selfUserPublicInfo;
 
   String get userID => loginCertificate.userID;
-  String get nickName => selfUserPublicInfo!.nickname;
+  String get nickName => userInfo.name;
+  String get phoneNumber => userInfo.phoneNumber;
 
   late String cachePath;
 

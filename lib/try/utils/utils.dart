@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:learn_flutter/try/utils/store.dart';
 import 'package:uuid/uuid.dart';
 
@@ -34,6 +37,10 @@ class Utils {
     return Store().userID;
   }
 
+  static String selfPhone() {
+    return Store().phoneNumber;
+  }
+
   static String selfNickName() {
     return Store().nickName;
   }
@@ -56,5 +63,9 @@ class Utils {
 
   static String getSelfFaceUrl() {
     return Store().selfUserPublicInfo!.faceURL;
+  }
+
+  static RenderBox getRenderBox(BuildContext context) {
+    return context.findRenderObject()! as RenderBox;
   }
 }

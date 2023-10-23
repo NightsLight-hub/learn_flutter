@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_flutter/open_im_ws/sdk_entry.dart' as $sdk;
 import 'package:learn_flutter/try/global_state/state.dart';
 import 'package:learn_flutter/try/pages/login/common.dart';
 import 'package:learn_flutter/try/utils/Constant.dart';
 import 'package:learn_flutter/try/utils/logger.dart';
-import 'package:learn_flutter/try/utils/store.dart';
 import 'package:learn_flutter/try/utils/utils.dart';
 
 import '../../_intern/tapable_avatar.dart';
@@ -47,8 +45,12 @@ class OperationPanel extends ConsumerWidget {
                     cursor: SystemMouseCursors.click,
                     child: TapableAvatar(
                       avatarUrl: Utils.getSelfFaceUrl(),
-                      onTap: () {
-                        logger.i("avatar tapped");
+                      onTapDown: (TapDownDetails details) async {
+                        var box = Utils.getRenderBox(context);
+                        final Offset localOffset =
+                            box.globalToLocal(details.globalPosition);
+                        logger.i('localOffset: $localOffset');
+                        _tapAvatar(context, localOffset);
                       },
                     ),
                   ),
@@ -131,29 +133,45 @@ class OperationPanel extends ConsumerWidget {
           ],
         ),
       ),
-      // Column(
-      //   children: [
-      //     Expanded(
-      //       child: Container(
-      //         decoration: BoxDecoration(
-      //           color: Colors.blue[100],
-      //           // shape: BoxShape.circle, //形状
-      //           border: const Border(left: BorderSide(width: 1.0)),
-      //         ),
-      //         child: const Row(
-      //           children: [
-      //             Column(
-      //                 // children: [
-      //                 //   ContactView()
-      //                 // ],
-      //                 ),
-      //           ],
-      //         ),
-      //       ),
-      //     )
-      //   ],
-      // ),
     );
+  }
+
+  _tapAvatar(BuildContext context, Offset localOffset) async {
+    showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            alignment: Alignment.topLeft,
+            insetPadding:
+                EdgeInsets.only(left: localOffset.dx, top: localOffset.dy),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(width: 10),
+                  Image(
+                    width: 80,
+                    height: 80,
+                    image: AssetImage(Utils.getSelfFaceUrl()),
+                  ),
+                  const SizedBox(width: 40),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SelectableText(Utils.selfNickName()),
+                      const SizedBox(height: 10),
+                      SelectableText('userID: ${Utils.selfID() ?? ''}'),
+                      SelectableText('电话: ${Utils.selfPhone()}'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   _logout(WidgetRef ref) {
